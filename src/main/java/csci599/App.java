@@ -1,14 +1,24 @@
 package csci599;
 
-import java.io.File;
-import org.apache.tika.Tika;
-
-// trying out code on Tika in Action pg 33
 public class App {
     public static void main(String[] args) throws Exception {
-        Tika tika = new Tika();
-        for (String file : args) {
-            System.out.println(tika.parseToString(new File(file)));
+        String usage = "Pass bfa to perform byte frequency analysis, bfc to perform byte frequency correlation, or fht to perform file/header trailer analysis.";
+        if (args.length < 1) {
+            System.out.println(usage);
+            return;
+        }
+        switch (args[0]) {
+            case "bfa":
+                System.out.println("TODO: bfa");
+                break;
+            case "bfc":
+                System.out.println("TODO: bfc");
+                break;
+            case "fht":
+                System.out.println("TODO: fht");
+                break;
+            default:
+                System.out.println(usage);
         }
     }
 }
