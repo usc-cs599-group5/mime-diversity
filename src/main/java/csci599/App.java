@@ -1,5 +1,7 @@
 package csci599;
 
+import java.io.File;
+
 public class App {
     public static void main(String[] args) throws Exception {
         String usage = "Pass bfa to perform byte frequency analysis, bfc to perform byte frequency correlation, or fht to perform file/header trailer analysis.";
@@ -9,8 +11,15 @@ public class App {
         }
         switch (args[0]) {
             case "bfa":
+            {
                 System.out.println("TODO: bfa");
+                BFA bf = new BFA();
+                //bf.freqAnalysis();
+                final File folder = new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\");
+                bf.listFilesForFolder(folder);
                 break;
+            }
+                
             case "bfc":
                 System.out.println("TODO: bfc");
                 break;
