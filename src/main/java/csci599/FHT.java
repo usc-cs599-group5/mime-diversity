@@ -18,22 +18,18 @@ public class FHT {
         // create sparse matrix
         matrix = new int[H][256];
         numFiles = 0;
-        try {
-            FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
-                try (FileInputStream in = new FileInputStream(file)) {
-                    numFiles++;
-                    for (int j = 0; j < H; j++) {
-                        int b = in.read();
-                        if (b < 0) break;
-                        matrix[j][b]++;
-                    }
-                } catch (IOException ex) {
-                    System.err.println("Error reading file: " + file.getPath());
+        FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
+            try (FileInputStream in = new FileInputStream(file)) {
+                numFiles++;
+                for (int j = 0; j < H; j++) {
+                    int b = in.read();
+                    if (b < 0) break;
+                    matrix[j][b]++;
                 }
-            });
-        } catch (IOException ex) {
-            System.err.println("Error iterating over folder.");
-        }
+            } catch (IOException ex) {
+                System.err.println("Error reading file: " + file.getPath());
+            }
+        });
         if (numFiles == 0) {
             System.out.println("Folder is empty.");
             return;
