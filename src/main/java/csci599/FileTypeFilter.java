@@ -9,7 +9,7 @@ import org.apache.tika.Tika;
 public class FileTypeFilter {
     private static Tika tika = new Tika();
 
-    public static void forEach(File folder, List<String> contentTypes, BiConsumer<File, String> callback) throws IOException {
+    public static void forEach(final File folder, final List<String> contentTypes, BiConsumer<File, String> callback) throws IOException {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 forEach(file, contentTypes, callback);
