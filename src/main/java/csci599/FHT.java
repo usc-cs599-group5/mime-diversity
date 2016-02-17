@@ -1,3 +1,7 @@
+// TODO:
+// I'm using wrong algorithm, should use http://www.computer.org/csdl/proceedings/hicss/2003/1874/09/187490332a.pdf
+// sort output by content type
+
 package csci599;
 
 import java.io.*;
@@ -6,25 +10,32 @@ import java.util.function.*;
 import static java.util.stream.Collectors.*;
 
 public class FHT {
-    public static void analyze(String[] fileNames) {
+    private static final int H = 16;
+    private static int[][] matrix;
+    private static int numFiles = 0; // don't use fileNames.length in case can't open some files
+
+    public static void analyze(File folder, List<String> contentTypes) {
         // create sparse matrix
-        final int H = 16;
-        int[][] matrix = new int[H][256];
-        int numFiles = 0; // don't use fileNames.length in case can't open some files
-        for (String fileName : fileNames) {
-            try (FileInputStream in = new FileInputStream(fileName)) {
-                numFiles++;
-                for (int j = 0; j < H; j++) {
-                    int b = in.read();
-                    if (b < 0) break;
-                    matrix[j][b]++;
+        matrix = new int[H][256];
+        numFiles = 0;
+        try {
+            FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
+                try (FileInputStream in = new FileInputStream(file)) {
+                    numFiles++;
+                    for (int j = 0; j < H; j++) {
+                        int b = in.read();
+                        if (b < 0) break;
+                        matrix[j][b]++;
+                    }
+                } catch (IOException ex) {
+                    System.err.println("Error reading file: " + file.getPath());
                 }
-            } catch (IOException ex) {
-                System.err.println("Error reading file: " + fileName);
-            }
+            });
+        } catch (IOException ex) {
+            System.err.println("Error iterating over folder.");
         }
         if (numFiles == 0) {
-            System.out.println("Must specify files.");
+            System.out.println("Folder is empty.");
             return;
         }
         // helper function to convert matrix row into string

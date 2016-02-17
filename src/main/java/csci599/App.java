@@ -25,7 +25,11 @@ public class App {
                 System.out.println("TODO: bfc");
                 break;
             case "fht":
-                FHT.analyze(Arrays.copyOfRange(args, 1, args.length));
+                if (args.length < 2) {
+                    System.out.println("Pass in folder then list of content types");
+                    return;
+                }
+                FHT.analyze(new File(args[1]), Arrays.asList(Arrays.copyOfRange(args, 2, args.length)));
                 break;
             default:
                 System.out.println(usage);
