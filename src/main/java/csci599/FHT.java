@@ -21,10 +21,16 @@ public class FHT {
         FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
             try (FileInputStream in = new FileInputStream(file)) {
                 numFiles++;
-                for (int j = 0; j < H; j++) {
+                for (int i = 0; i < H; i++) {
                     int b = in.read();
-                    if (b < 0) break;
-                    matrix[j][b]++;
+                    if (b >= 0) {
+                        matrix[i][b]++;
+                    } else {
+                        // end of file, subtract 1 from rows
+                        for (int j = 0; j < 256; j++) {
+                            matrix[i][j]--;
+                        }
+                    }
                 }
             } catch (IOException ex) {
                 System.err.println("Error reading file: " + file.getPath());
@@ -35,6 +41,7 @@ public class FHT {
             return;
         }
         // helper function to convert matrix row into string
+        // dividing by numFiles here is equivalent to fingerprint formula in II.3.2 of paper
         final double finalNumFiles = numFiles;
         Function<int[], String> rowString = row -> Arrays.stream(row).mapToObj(c -> "" + c / finalNumFiles).collect(joining(","));
         // write csv file
