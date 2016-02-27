@@ -1,7 +1,3 @@
-// TODO:
-// I'm using wrong algorithm, should use http://www.computer.org/csdl/proceedings/hicss/2003/1874/09/187490332a.pdf
-// sort output by content type
-
 package csci599;
 
 import java.io.*;
@@ -11,14 +7,16 @@ import static java.util.stream.Collectors.*;
 
 public class FHT {
     private static final int H = 16;
-    private static int[][] matrix;
-    private static int numFiles = 0; // don't use fileNames.length in case can't open some files
 
-    public static void analyze(File folder, List<String> contentTypes) {
-        // create sparse matrix
-        matrix = new int[H][256];
-        numFiles = 0;
-        FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
+    private static class Fingerprint {
+        public int[][] matrix;
+        public int numFiles = 0;
+
+        public Fingerprint() {
+            matrix = new int[H][256];
+        }
+
+        public void addFile(File file) {
             try (FileInputStream in = new FileInputStream(file)) {
                 numFiles++;
                 for (int i = 0; i < H; i++) {
@@ -35,30 +33,36 @@ public class FHT {
             } catch (IOException ex) {
                 System.err.println("Error reading file: " + file.getPath());
             }
+        }
+    }
+
+    public static void analyze(File folder, List<String> contentTypes) {
+        // initialize fingerprints
+        final Map<String, Fingerprint> fingerprints = new HashMap<>();
+        for (String contentType : contentTypes) {
+            fingerprints.put(contentType, new Fingerprint());
+        }
+        // create sparse matrices
+        FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
+            fingerprints.get(contentType).addFile(file);
         });
-        if (numFiles == 0) {
-            System.out.println("Folder is empty.");
-            return;
-        }
-        // helper function to convert matrix row into string
-        // dividing by numFiles here is equivalent to fingerprint formula in II.3.2 of paper
-        final double finalNumFiles = numFiles;
-        Function<int[], String> rowString = row -> Arrays.stream(row).mapToObj(c -> "" + c / finalNumFiles).collect(joining(","));
-        // write csv file
-        try (Writer out = new OutputStreamWriter(new FileOutputStream("fht.csv"), "UTF-8")) {
-            for (int[] row : matrix) {
-                out.write(rowString.apply(row) + "\n");
-            }
-        } catch (IOException ex) {
-            System.err.println("Error writing fht.csv");
-        }
         // write json file
+        // Andrew wanted to use Clojure but he was outvoted, so he gets to use Java streams instead :)
         try (Writer out = new OutputStreamWriter(new FileOutputStream("fht.json"), "UTF-8")) {
-            out.write("[\n");
-            for (int[] row : matrix) {
-                out.write("    [" + rowString.apply(row) + "],\n");
-            }
-            out.write("]\n");
+            out.write("{\n" + fingerprints.entrySet().stream()
+                .filter(entry -> {
+                    if (entry.getValue().numFiles == 0) {
+                        System.out.println("Warning: No files found with MIME type " + entry.getKey());
+                        return false;
+                    }
+                    return true;
+                })
+                .map(entry -> "    \"" + entry.getKey() + "\": [\n" + Arrays.stream(entry.getValue().matrix)
+                    // dividing by numFiles here is equivalent to fingerprint formula in II.3.2 of paper
+                    .map(row -> "        [" + Arrays.stream(row).mapToObj(c -> "" + c / (double)entry.getValue().numFiles)
+                                                                .collect(joining(",")) + "]")
+                    .collect(joining(",\n")) + "\n    ]")
+                .collect(joining(",\n")) + "\n}\n");
         } catch (IOException ex) {
             System.err.println("Error writing fht.json");
         }
