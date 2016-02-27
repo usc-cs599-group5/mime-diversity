@@ -1,7 +1,10 @@
 package csci599;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,16 +37,24 @@ public class JSONGenerator
             json=json+"]";
             json=json+"},";
         }
-        json=json.substring(0, json.length()-1);
+        json=json.substring(0, json.length()-2);
         json=json+"}";
         return json;
     }
     
-    public static double[][] getJSONFingerptint(String filePath) throws FileNotFoundException
+    public static double[][] getJSONFingerptint(String filePath) throws FileNotFoundException, IOException
     {
         double[][] fingerprint=new double[noOfMIMETypes][charSetSize];
-        FileInputStream in = new FileInputStream(filePath);
-        
+        BufferedReader br=new BufferedReader(new FileReader(filePath));
+        String input="",inputFile="";
+        while((input=br.readLine())!=null)
+        {
+            inputFile=inputFile+input;
+        }
+        int i=0,j=0;
+        String[] MIMETypes=inputFile.split("},");
+        MIMETypes[0]=MIMETypes[0].substring(1, MIMETypes[0].length());
+        MIMETypes[14]=MIMETypes[14].substring(0,MIMETypes[14].length()-1);
         return fingerprint;
     }
 }
