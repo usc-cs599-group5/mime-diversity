@@ -1,57 +1,150 @@
 package csci599;
+import com.google.common.io.Files;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 public class BFA {
-    static float[] avgfrequency;
-    static int no_of_files;
+    static HashMap<String,ArrayList<Double>> avgfrequency = new HashMap<>();
+    static HashMap<String,ArrayList<Double>> corrstrength = new HashMap<>();
+    static HashMap<String,Integer> no_of_files = new HashMap<>();
+    static List<String> ContentType;
     BFA(){
-        avgfrequency = new float[256];
-        no_of_files = 0;
+        //Adding Content types
+        ContentType = new ArrayList();
+        ContentType.add("image/jpg");
+        ContentType.add("image/png");
+        ContentType.add("text/plain");
+        //Initializing no_of-files,avgfrequency,correlation strength
+        Iterator<String> content_itr = ContentType.iterator();
+        ArrayList<Double> arr = new ArrayList();
+        for(int i = 0 ; i < 256;i++){
+            arr.add(0.0);
+        }
+        while(content_itr.hasNext()){
+            String s = content_itr.next();
+            no_of_files.put(s,0);
+            avgfrequency.put(s,arr);
+            corrstrength.put(s,arr);
+        }
     }
-    public void listFilesForFolder(final File folder) {
-        for (final File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory()) {
-                listFilesForFolder(fileEntry);
-            } 
-            else {
-                System.out.println(fileEntry.getName());
-                freqAnalysis("C:\\Users\\Public\\Pictures\\Sample Pictures\\" + fileEntry.getName());
-                System.out.println("I m back");
+    //Analysing each files in a folder
+    public void listFilesForFolder(final File folder){
+        FileTypeFilter.forEach(folder,ContentType, (file, contentType) -> {
+            System.out.println(contentType);
+            double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
+            avg(contentType,fingerprint);                //Adding fingerprint to its avg
+            ArrayList<Double> corrfactor = findcorrelation(fingerprint,contentType); //Calulating correlation factor
+            addCorrelation(corrfactor,contentType);
+            int num = no_of_files.get(contentType);      //Updating total no of files
+            no_of_files.put(contentType, num+1);
+            ArrayList<Double> cr = corrstrength.get(contentType);
+            for(int i = 0 ; i < 256 ; i++){
+                System.out.print(cr.get(i) + "  ");
+                if(i%8 == 0)System.out.println();
             }
+            System.out.println("");
+        });
+        JsonConnect();
     }
-}
-    public void freqAnalysis(String f){
-        float[] fingerprint = new float[256];
-        float[] frequency = new float[256];
+    public static double[] freqAnalysis(File f){
+        double[] fingerprint = new double[256];
+        double[] frequency = new double[256];
         for(int i = 0; i < 256;i++){
             frequency[i] = 0;
         }        
         try{
-            //FileInputStream in = new FileInputStream("D:\\Studies\\Studies\\USC\\tika-test\\src\\main\\java\\csci599\\TempFile.txt");
             FileInputStream in = new FileInputStream(f);
             int c;
+            //Calculating frequecy of words
             while ((c = in.read()) != -1){
                 frequency[c]+=1;
             }
             //Finding max occurring frequency
-            float max = 0;
+            double max = 0;
             for(int i = 0;i < 256; i++){
                 if(max < frequency[i]) max = frequency[i];
             }
             //Normalising frequency
             for(int i = 0; i < 256;i++){
                 fingerprint[i] = frequency[i]/max;
-                System.out.print(fingerprint[i] + " ");
+                //System.out.print(fingerprint[i] + " ");
             }
-            //Updating avg fingerprint
-            for(int i = 0; i < 256;i++){
-                avgfrequency[i] = ((avgfrequency[i] * no_of_files) + fingerprint[i])/(no_of_files + 1);
-                System.out.print(avgfrequency[i] + " ");
-                no_of_files++;
-            }
+            //Companding function call
+            fingerprint = companding(fingerprint);
         }
         catch(Exception e){
             System.out.println("File not found exception");
         }
-
+        return fingerprint;
+    }
+    public void avg(String Contenttype,double[] fingerprint){
+            //Updating avg fingerprint
+            ArrayList<Double> arr = avgfrequency.get(Contenttype);
+            ArrayList<Double> newavg = new ArrayList();
+            Integer num = no_of_files.get(Contenttype);
+            int display = 1;
+            for(int i = 0 ; i < 256 ; i++){
+                Double avgfre = arr.get(i);
+                //if(i == 1)System.out.print("Old Avg " + avgfre + "    ");
+                Double temp = ((avgfre * num) + fingerprint[i])/(num + 1);
+                //if(i == 1)System.out.println("New Avg " + temp);
+                newavg.add(i, temp);
+                if(display <= 8){display++;System.out.print(temp + " ");}
+                else {System.out.println();display = 0;}                
+            }
+            avgfrequency.replace(Contenttype,newavg);
+            System.out.println();
+    }
+    public static double[] companding(double[] fingerprint){
+  
+        double beta = 1.5;
+        for(int i = 0 ; i < 256 ; i++){
+            Double x = fingerprint[i];
+            Double y = Math.pow(x,(1/beta));
+            fingerprint[i] = y;   
+        }
+        return fingerprint;
+    }
+    public static ArrayList<Double> findcorrelation(double[] fingerprint,String contenttype){
+        Double[] x = new Double[256];
+        ArrayList<Double> arr = avgfrequency.get(contenttype); 
+        //Calculating Difference
+        for(int i = 0; i < 256 ; i++){
+            Double x1 = arr.get(i);
+            x[i] = Math.abs(x1-fingerprint[i]);
+        }
+        //Implementing Bell Curve
+        double sigma = 0.0375;
+        ArrayList<Double> corrfactor = new ArrayList();
+        for(int i = 0 ; i < 256 ; i++){
+            double corfact = Math.pow(Math.E,((x[i]*x[i]) * (-1))/(2*sigma));
+            //if(i =='a') System.out.println("Hi  " + corfact);
+            corrfactor.add(i, corfact);
+        }
+        //Returning correlation factor
+        return corrfactor;
+    }
+    public void addCorrelation(ArrayList<Double> corrfactor,String contenttype){
+        int PNF = no_of_files.get(contenttype);
+        System.out.println("No of Files" + PNF);
+        ArrayList<Double> temp = new ArrayList();
+        ArrayList<Double> old = corrstrength.get(contenttype);
+        for(int i = 0 ; i < 256 ; i++){
+            Double NCS = ((old.get(i) * PNF) + corrfactor.get(i))/ (PNF+1);
+            temp.add(i, NCS);
+        }
+        corrstrength.replace(contenttype,temp);
+    }
+    public void JsonConnect(){
+        String s = JSONGenerator.generateJSON(avgfrequency, corrstrength);
+        try{
+            Files.write(s.getBytes(),new File("D:\\Big_Data_Dumps\\temp\\fingerprint.json"));
+        }
+        catch(Exception e){
+            System.out.println("File Exception");
+        }
     }
 }
