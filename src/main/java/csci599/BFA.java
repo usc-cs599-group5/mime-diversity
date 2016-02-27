@@ -1,4 +1,5 @@
 package csci599;
+import com.google.common.io.Files;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class BFA {
             }
             System.out.println("");
         });
+        JsonConnect();
     }
     public static double[] freqAnalysis(File f){
         double[] fingerprint = new double[256];
@@ -136,5 +138,13 @@ public class BFA {
         }
         corrstrength.replace(contenttype,temp);
     }
-
+    public void JsonConnect(){
+        String s = JSONGenerator.generateJSON(avgfrequency, corrstrength);
+        try{
+            Files.write(s.getBytes(),new File("D:\\Big_Data_Dumps\\temp\\fingerprint.json"));
+        }
+        catch(Exception e){
+            System.out.println("File Exception");
+        }
+    }
 }
