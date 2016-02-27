@@ -13,10 +13,8 @@ public class App {
         switch (args[0]) {
             case "bfa":
             {
-                System.out.println("TODO: bfa");
                 BFA bf = new BFA();
-                //bf.freqAnalysis();
-                final File folder = new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\");
+                final File folder = new File("D:\\Big_Data_Dumps\\temp");
                 bf.listFilesForFolder(folder);
                 break;
             }
