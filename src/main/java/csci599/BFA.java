@@ -33,7 +33,7 @@ public class BFA {
     //Analysing each files in a folder
     public void listFilesForFolder(final File folder){
         FileTypeFilter.forEach(folder,ContentType, (file, contentType) -> {
-            System.out.println(contentType);
+            //System.out.println(contentType);
             double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
             avg(contentType,fingerprint);                //Adding fingerprint to its avg
             ArrayList<Double> corrfactor = findcorrelation(fingerprint,contentType); //Calulating correlation factor
@@ -41,13 +41,10 @@ public class BFA {
             int num = no_of_files.get(contentType);      //Updating total no of files
             no_of_files.put(contentType, num+1);
             ArrayList<Double> cr = corrstrength.get(contentType);
-            for(int i = 0 ; i < 256 ; i++){
-                System.out.print(cr.get(i) + "  ");
-                if(i%8 == 0)System.out.println();
-            }
-            System.out.println("");
         });
+        displayFingerprintCorr();
         JsonConnect();
+        
     }
     public static double[] freqAnalysis(File f){
         double[] fingerprint = new double[256];
@@ -92,11 +89,11 @@ public class BFA {
                 Double temp = ((avgfre * num) + fingerprint[i])/(num + 1);
                 //if(i == 1)System.out.println("New Avg " + temp);
                 newavg.add(i, temp);
-                if(display <= 8){display++;System.out.print(temp + " ");}
-                else {System.out.println();display = 0;}                
+                //if(display <= 8){display++;System.out.print(temp + " ");}
+                //else {System.out.println();display = 0;}                
             }
             avgfrequency.replace(Contenttype,newavg);
-            System.out.println();
+            //System.out.println();
     }
     public static double[] companding(double[] fingerprint){
   
@@ -129,7 +126,7 @@ public class BFA {
     }
     public void addCorrelation(ArrayList<Double> corrfactor,String contenttype){
         int PNF = no_of_files.get(contenttype);
-        System.out.println("No of Files" + PNF);
+        //System.out.println("No of Files" + PNF);
         ArrayList<Double> temp = new ArrayList();
         ArrayList<Double> old = corrstrength.get(contenttype);
         for(int i = 0 ; i < 256 ; i++){
@@ -145,6 +142,25 @@ public class BFA {
         }
         catch(Exception e){
             System.out.println("File Exception");
+        }
+    }
+    public static void displayFingerprintCorr(){
+        Iterator<String> itr = ContentType.iterator();
+        while(itr.hasNext()){
+            String content = itr.next();
+            System.out.println(content);
+            System.out.println("Avg frequency");
+            for(int i = 0 ; i < 256 ; i++){
+                System.out.print(avgfrequency.get(content).get(i) + " ");
+                if(i%8 == 0)System.out.println("");
+            }
+            System.out.println("");
+            System.out.println("Correlation");
+            for(int i = 0 ; i < 256 ; i++){
+                System.out.print(corrstrength.get(content).get(i) + " ");
+                if(i%8 == 0)System.out.println("");
+            }
+            System.out.println("");
         }
     }
 }
