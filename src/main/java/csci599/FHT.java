@@ -3,7 +3,6 @@ package csci599;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
-import static java.util.stream.Collectors.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FHT {
@@ -37,14 +36,14 @@ public class FHT {
         }
     }
 
-    public static void analyze(File folder, List<String> contentTypes) {
+    public static void analyze(File sortFolder) {
         // initialize fingerprints
         Map<String, Fingerprint> fingerprints = new HashMap<>();
-        for (String contentType : contentTypes) {
+        for (String contentType : FileTypeFilter.getMIMETypes(sortFolder)) {
             fingerprints.put(contentType, new Fingerprint());
         }
         // create sparse matrices
-        FileTypeFilter.forEach(folder, contentTypes, (file, contentType) -> {
+        FileTypeFilter.forEach(sortFolder, (file, contentType) -> {
             fingerprints.get(contentType).addFile(file);
         });
         // write json file

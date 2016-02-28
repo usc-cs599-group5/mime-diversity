@@ -1,29 +1,68 @@
 package csci599;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.BiConsumer;
+import java.io.*;
+import java.util.*;
+import java.util.function.*;
+import static java.util.stream.Collectors.*;
 import org.apache.tika.Tika;
 
 public class FileTypeFilter {
     private static Tika tika = new Tika();
 
-    public static void forEach(final File folder, final List<String> contentTypes, BiConsumer<File, String> callback) {
+    public static List<String> getMIMETypes(final File sortFolder) {
+        return Arrays.stream(sortFolder.listFiles())
+                     .map(file -> file.getName().replace(';', '/'))
+                     .collect(toList());
+    }
+
+    public static void forEach(final File sortFolder, BiConsumer<File, String> callback) {
+        for (File file : sortFolder.listFiles()) {
+            String mimeType = file.getName().replace(';', '/');
+            try (Scanner scanner = new Scanner(file)) {
+                while (scanner.hasNextLine()) {
+                    callback.accept(new File(scanner.nextLine()), mimeType);
+                }
+            } catch (Exception ex) {
+                System.err.println("Error iterating over files of MIME type " + mimeType);
+            }
+        }
+    }
+
+    public static void sort(final File folder, final List<String> contentTypes) {
+        final Map<String, Writer> writers = contentTypes.stream().collect(toMap(Function.identity(), contentType -> {
+            try {
+                return new OutputStreamWriter(new FileOutputStream(contentType.replace('/', ';')), "UTF-8");
+            } catch (Exception ex) {
+                System.err.println("Error creating file.");
+                System.exit(-1);
+                return null;
+            }
+        }));
+        forEachInFolder(folder, file -> {
+            try {
+                String contentType = tika.detect(file);
+                if (contentTypes.contains(contentType)) {
+                    writers.get(contentType).write(file.getCanonicalPath() + '\n');
+                }
+            } catch (IOException ex) {
+                System.err.println("Error sorting file: " + file.getPath());
+            }
+        });
+        for (Writer writer : writers.values()) {
+            try {
+                writer.close();
+            } catch (IOException ex) {
+                System.err.println("Error closing file.");
+            }
+        }
+    }
+
+    private static void forEachInFolder(final File folder, Consumer<File> callback) {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
-                forEach(file, contentTypes, callback);
-            } else {
-                String contentType;
-                try {
-                    contentType = tika.detect(file);
-                } catch (IOException ex) {
-                    System.err.println("Tika could not read file: " + file.getPath());
-                    continue;
-                }
-                if (contentTypes.contains(contentType)) {
-                    callback.accept(file, contentType);
-                }
+                forEachInFolder(file, callback);
+            } else if (file.length() > 0) {
+                callback.accept(file);
             }
         }
     }
