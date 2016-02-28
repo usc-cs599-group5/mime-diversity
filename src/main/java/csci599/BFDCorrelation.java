@@ -34,6 +34,7 @@ public class BFDCorrelation
         for (File file : folder.listFiles()) {
             if (!file.isDirectory()) {
                 BFC(file.getPath());
+                
             }
         }
     }
@@ -75,7 +76,7 @@ public class BFDCorrelation
                 correlationStrength[i][j]=findCorrelationStrength(correlationFactor);
             }
         }
-        
+        /*
         //calculate assurance level //not sure this is correct //my interpretation
         double[] assuranceLevels=new double[noOfMIMETypes];
         for(int i=0;i<noOfMIMETypes;i++)
@@ -87,7 +88,7 @@ public class BFDCorrelation
         }
         int matchedMIMEType=findMaxIndex(assuranceLevels);
         return MIMEType[matchedMIMEType];
-        /*
+        */
         //calculate assurance level //not sure this is correct //from whatever understood from the algorithm
         for(int i=0;i<15;i++)
         {
@@ -96,8 +97,10 @@ public class BFDCorrelation
                 assuranceLevel[i][j]=(correlationStrength[i][j]+fingerPrintCS[i][j])/2;
             }
         }
-        int matchedMIMEType=findMaxIndex(assuranceLevels);
-        return MIMEType[matchedMIMEType];*/
+        double[] avgAL=new double[noOfMIMETypes];
+        avgAL=avg(assuranceLevel,avgAL);
+        int matchedMIMEType=findMatch(avgAL);
+        return MIMEType[matchedMIMEType];
     }
     
     public double[] BFD(String filePath) throws FileNotFoundException, IOException
@@ -166,5 +169,35 @@ public class BFDCorrelation
             }
         }
         return maxIndex;
+    }
+    
+    public double[] avg(double[][] array,double[] result)
+    {
+        for(int i=0;i<array.length;i++)
+        {
+            double sum=0;
+            int j=0;
+            for(j=0;j<array[i].length;j++)
+            {
+                sum=sum+array[i][j];
+            }
+            result[i]=sum/j;
+        }
+        return result;
+    }
+    
+    public int findMatch(double[] array)
+    {
+        int match=0;
+        double max=array[0];
+        for(int i=0;i<array.length;i++)
+        {
+            if(max<array[i])
+            {
+                max=array[i];
+                match=i;
+            }
+        }
+        return match;
     }
 }
