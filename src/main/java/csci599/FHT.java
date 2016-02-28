@@ -39,7 +39,7 @@ public class FHT {
 
     public static void analyze(File folder, List<String> contentTypes) {
         // initialize fingerprints
-        final Map<String, Fingerprint> fingerprints = new HashMap<>();
+        Map<String, Fingerprint> fingerprints = new HashMap<>();
         for (String contentType : contentTypes) {
             fingerprints.put(contentType, new Fingerprint());
         }
