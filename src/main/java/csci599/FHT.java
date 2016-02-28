@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import static java.util.stream.Collectors.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FHT {
     private static final int H = 16;
@@ -38,7 +39,7 @@ public class FHT {
 
     public static void analyze(File folder, List<String> contentTypes) {
         // initialize fingerprints
-        final Map<String, Fingerprint> fingerprints = new HashMap<>();
+        Map<String, Fingerprint> fingerprints = new HashMap<>();
         for (String contentType : contentTypes) {
             fingerprints.put(contentType, new Fingerprint());
         }
@@ -47,22 +48,24 @@ public class FHT {
             fingerprints.get(contentType).addFile(file);
         });
         // write json file
-        // Andrew wanted to use Clojure but he was outvoted, so he gets to use Java streams instead :)
-        try (Writer out = new OutputStreamWriter(new FileOutputStream("fht.json"), "UTF-8")) {
-            out.write("{\n" + fingerprints.entrySet().stream()
-                .filter(entry -> {
-                    if (entry.getValue().numFiles == 0) {
-                        System.out.println("Warning: No files found with MIME type " + entry.getKey());
-                        return false;
+        Map<String, double[][]> json = new HashMap<>();
+        for (Map.Entry<String, Fingerprint> entry : fingerprints.entrySet()) {
+            Fingerprint fingerprint = entry.getValue();
+            if (fingerprint.numFiles == 0) {
+                System.out.println("Warning: No files found with MIME type " + entry.getKey());
+            } else {
+                double[][] matrix = new double[H][256];
+                for (int i = 0; i < H; i++) {
+                    for (int j = 0; j < 256; j++) {
+                        // dividing by numFiles here is equivalent to fingerprint formula in II.3.2 of paper
+                        matrix[i][j] = fingerprint.matrix[i][j] / (double)fingerprint.numFiles;
                     }
-                    return true;
-                })
-                .map(entry -> "    \"" + entry.getKey() + "\": [\n" + Arrays.stream(entry.getValue().matrix)
-                    // dividing by numFiles here is equivalent to fingerprint formula in II.3.2 of paper
-                    .map(row -> "        [" + Arrays.stream(row).mapToObj(c -> "" + c / (double)entry.getValue().numFiles)
-                                                                .collect(joining(",")) + "]")
-                    .collect(joining(",\n")) + "\n    ]")
-                .collect(joining(",\n")) + "\n}\n");
+                }
+                json.put(entry.getKey(), matrix);
+            }
+        }
+        try {
+            new ObjectMapper().writeValue(new File("fht.json"), json);
         } catch (IOException ex) {
             System.err.println("Error writing fht.json");
         }
