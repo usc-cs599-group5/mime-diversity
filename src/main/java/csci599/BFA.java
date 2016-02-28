@@ -137,7 +137,7 @@ public class BFA {
     }
     public void JsonConnect(){
         try{
-            JSONGenerator.generateJSON("E:\\Sem 2\\CSCI 599\\fingerprint.json",avgfrequency, corrstrength);
+            JSONGenerator.generateJSON("bfa.json",avgfrequency, corrstrength);
         }
         catch(Exception e){
             System.out.println("File Exception");

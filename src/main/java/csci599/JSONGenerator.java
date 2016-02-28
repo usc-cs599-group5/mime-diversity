@@ -16,6 +16,23 @@ import java.util.Map;
 public class JSONGenerator
 {
     static ObjectMapper mapper = new ObjectMapper();
+
+    // This assumes that fingerprint and correlationStrengths have the same keys.
+    public static void generateJSON(String filePath,HashMap<String,ArrayList<Double>> fingerprint,HashMap<String,ArrayList<Double>> correlationStrengths) {
+        Map<String, JSONFingerPrint> json = new HashMap<>();
+        for (String mime : fingerprint.keySet()) {
+            JSONFingerPrint jsonFingerprint= new JSONFingerPrint();
+            jsonFingerprint.BFD = fingerprint.get(mime);
+            jsonFingerprint.CS = correlationStrengths.get(mime);
+            json.put(mime, jsonFingerprint);
+        }
+        try {
+            mapper.writeValue(new File(filePath), json);
+        } catch (IOException ex) {
+            System.out.println("Error writing BFA JSON file.");
+        }
+    }
+
     static int noOfMIMETypes=15;
     static int charSetSize=256;
     
@@ -63,11 +80,11 @@ public class JSONGenerator
         return fingerprint;
     }*/
     
-    public static void generateJSON(String filePath,HashMap<String,ArrayList<Double>> fingerprint,HashMap<String,ArrayList<Double>> correlationStrengths) throws IOException
+    /*public static void generateJSON(String filePath,HashMap<String,ArrayList<Double>> fingerprint,HashMap<String,ArrayList<Double>> correlationStrengths) throws IOException
     {
         WriteJSONFingerPrint FPHashMap = new WriteJSONFingerPrint(fingerprint,correlationStrengths);
         mapper.writeValue(new File(filePath), FPHashMap);
-    }
+    }*/
     
     public static HashMap<String, ArrayList<Double>> getJSONFingerprint(String filePath) throws IOException
     {

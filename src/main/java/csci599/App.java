@@ -14,7 +14,7 @@ public class App {
             case "bfa":
             {
                 BFA bf = new BFA();
-                final File folder = new File("E:\\Sem 2\\CSCI 599\\Test");
+                final File folder = new File("../polar-dump");
                 bf.listFilesForFolder(folder);
                 break;
             }
@@ -22,7 +22,7 @@ public class App {
             case "bfc":
             {
                 BFDCorrelation bfc5a = new BFDCorrelation();
-                final File folder = new File("E:\\Sem 2\\CSCI 599\\");
+                final File folder = new File("../polar-dump");
                 try {
                     bfc5a.listFilesForFolder(folder);
                 } catch (Exception ex) {
