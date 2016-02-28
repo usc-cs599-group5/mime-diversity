@@ -23,7 +23,12 @@ public class App {
             {
                 BFDCorrelation bfc5a = new BFDCorrelation();
                 final File folder = new File("E:\\Sem 2\\CSCI 599\\");
-                bfc5a.listFilesForFolder(folder);
+                try {
+                    bfc5a.listFilesForFolder(folder);
+                } catch (Exception ex) {
+                    System.err.println("Error in BFC:");
+                    ex.printStackTrace();
+                }
                 break;
             }
             case "fht":
