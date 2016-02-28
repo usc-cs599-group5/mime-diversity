@@ -1,10 +1,11 @@
 package csci599;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String usage = "Pass bfa to perform byte frequency analysis, bfc to perform byte frequency correlation, or fht to perform file/header trailer analysis.";
         if (args.length < 1) {
             System.out.println(usage);
@@ -14,14 +15,18 @@ public class App {
             case "bfa":
             {
                 BFA bf = new BFA();
-                final File folder = new File("D:\\Big_Data_Dumps\\temp");
+                final File folder = new File("E:\\Sem 2\\CSCI 599\\Test");
                 bf.listFilesForFolder(folder);
                 break;
             }
                 
             case "bfc":
-                System.out.println("TODO: bfc");
+            {
+                BFDCorrelation bfc5a = new BFDCorrelation();
+                final File folder = new File("E:\\Sem 2\\CSCI 599\\");
+                bfc5a.listFilesForFolder(folder);
                 break;
+            }
             case "fht":
                 if (args.length < 2) {
                     System.out.println("Pass in folder then list of content types");
