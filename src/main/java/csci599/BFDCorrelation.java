@@ -1,16 +1,19 @@
 package csci599;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class BFDCorrelation
 {
     static String[] MIMEType=new String[15];
     static int noOfMIMETypes;
     static int charSetSize;
+    static List<String> ContentType;
     
     BFDCorrelation()
     {
@@ -20,6 +23,19 @@ public class BFDCorrelation
         }
         noOfMIMETypes=15;
         charSetSize=256;
+        ContentType = new ArrayList();
+        ContentType.add("image/jpg");
+        ContentType.add("image/png");
+        ContentType.add("text/plain");
+    }
+    
+    //Analysing each files in a folder
+    public void listFilesForFolder(final File folder) throws IOException{
+        for (File file : folder.listFiles()) {
+            if (!file.isDirectory()) {
+                BFC(file.getPath());
+            }
+        }
     }
     
     public String BFC(String filePath) throws IOException
@@ -28,8 +44,14 @@ public class BFDCorrelation
         double[] inputFile=new double[charSetSize];
         
         //read the fingerprint from json
-        double[][] fingerPrintBFDs=new double[noOfMIMETypes][charSetSize];
-        
+        //double[][] fingerPrintBFDs=new double[noOfMIMETypes][charSetSize];
+        double[][] fingerPrintBFDs=JSONGenerator.getJSONFingerprintArray("E:\\Sem 2\\CSCI 599\\fingerprint.json");
+        for(int i=0;i<fingerPrintBFDs.length;i++)
+        {
+            for(int j=0;j<fingerPrintBFDs[i].length;j++)
+                System.out.print(fingerPrintBFDs[i][j]+", ");
+            System.out.println("");
+        }
         //read correlation strengths from json //used if second interpretation of assurance level is used
         double[][] fingerPrintCS=new double[noOfMIMETypes][charSetSize];
         
@@ -53,6 +75,7 @@ public class BFDCorrelation
                 correlationStrength[i][j]=findCorrelationStrength(correlationFactor);
             }
         }
+        
         //calculate assurance level //not sure this is correct //my interpretation
         double[] assuranceLevels=new double[noOfMIMETypes];
         for(int i=0;i<noOfMIMETypes;i++)
@@ -72,7 +95,9 @@ public class BFDCorrelation
             {
                 assuranceLevel[i][j]=(correlationStrength[i][j]+fingerPrintCS[i][j])/2;
             }
-        }*/
+        }
+        int matchedMIMEType=findMaxIndex(assuranceLevels);
+        return MIMEType[matchedMIMEType];*/
     }
     
     public double[] BFD(String filePath) throws FileNotFoundException, IOException
