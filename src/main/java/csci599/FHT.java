@@ -3,7 +3,6 @@ package csci599;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
-import static java.util.stream.Collectors.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FHT {
