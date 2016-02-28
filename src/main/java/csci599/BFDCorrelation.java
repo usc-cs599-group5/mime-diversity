@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class BFDCorrelation
@@ -30,7 +31,7 @@ public class BFDCorrelation
     }
     
     //Analysing each files in a folder
-    public void listFilesForFolder(final File folder) throws IOException{
+    public void listFilesForFolder(final File folder) {
         for (File file : folder.listFiles()) {
             if (!file.isDirectory()) {
                 BFC(file.getPath());
@@ -38,20 +39,30 @@ public class BFDCorrelation
         }
     }
     
-    public String BFC(String filePath) throws IOException
+    public String BFC(String filePath)
     {
+        //read json file
+        Map<String, BFAFingerprint> json;
+        try {
+            json = JSONGenerator.readJSON("bfa.json");
+            //System.out.println(json);
+        } catch (IOException ex) {
+            System.out.println("Error reading bfa.json. Make sure it exists.");
+            return "";
+        }
+
         //contains BFD of input file
         double[] inputFile=new double[charSetSize];
         
         //read the fingerprint from json
-        //double[][] fingerPrintBFDs=new double[noOfMIMETypes][charSetSize];
-        double[][] fingerPrintBFDs=JSONGenerator.getJSONFingerprintArray("E:\\Sem 2\\CSCI 599\\fingerprint.json");
+        double[][] fingerPrintBFDs=new double[noOfMIMETypes][charSetSize];
+        /*double[][] fingerPrintBFDs=JSONGenerator.getJSONFingerprintArray("E:\\Sem 2\\CSCI 599\\fingerprint.json");
         for(int i=0;i<fingerPrintBFDs.length;i++)
         {
             for(int j=0;j<fingerPrintBFDs[i].length;j++)
                 System.out.print(fingerPrintBFDs[i][j]+", ");
             System.out.println("");
-        }
+        }*/
         //read correlation strengths from json //used if second interpretation of assurance level is used
         double[][] fingerPrintCS=new double[noOfMIMETypes][charSetSize];
         
@@ -61,7 +72,12 @@ public class BFDCorrelation
         //assurance levels of input file and fingerprint //used if second interpretation of assurance level is used
         double[][] assuranceLevel=new double[noOfMIMETypes][charSetSize];
         //calculate the BFD of the input file
-        inputFile=BFD(filePath);
+        try {
+            inputFile=BFD(filePath);
+        } catch (Exception ex) {
+            System.out.println("Error reading file: " + filePath);
+            return "";
+        }
         //normalize the BFD
         inputFile=Normalize(inputFile);
         //perform companding if spikes are present

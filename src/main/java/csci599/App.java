@@ -29,12 +29,7 @@ public class App {
             {
                 BFDCorrelation bfc5a = new BFDCorrelation();
                 final File folder = new File(args[1]);
-                try {
-                    bfc5a.listFilesForFolder(folder);
-                } catch (Exception ex) {
-                    System.err.println("Error in BFC:");
-                    ex.printStackTrace();
-                }
+                bfc5a.listFilesForFolder(folder);
                 break;
             }
             case "fht":

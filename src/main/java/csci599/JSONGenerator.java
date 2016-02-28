@@ -19,9 +19,9 @@ public class JSONGenerator
 
     // This assumes that fingerprint and correlationStrengths have the same keys.
     public static void generateJSON(String filePath,HashMap<String,ArrayList<Double>> fingerprint,HashMap<String,ArrayList<Double>> correlationStrengths) {
-        Map<String, JSONFingerPrint> json = new HashMap<>();
+        Map<String, BFAFingerprint> json = new HashMap<>();
         for (String mime : fingerprint.keySet()) {
-            JSONFingerPrint jsonFingerprint= new JSONFingerPrint();
+            BFAFingerprint jsonFingerprint= new BFAFingerprint();
             jsonFingerprint.BFD = fingerprint.get(mime);
             jsonFingerprint.CS = correlationStrengths.get(mime);
             json.put(mime, jsonFingerprint);
@@ -31,6 +31,10 @@ public class JSONGenerator
         } catch (IOException ex) {
             System.out.println("Error writing BFA JSON file.");
         }
+    }
+
+    public static HashMap<String, BFAFingerprint> readJSON(String filePath) throws IOException {
+        return mapper.readValue(new File(filePath), new TypeReference<Map<String, BFAFingerprint>>() { } );
     }
 
     static int noOfMIMETypes=15;
