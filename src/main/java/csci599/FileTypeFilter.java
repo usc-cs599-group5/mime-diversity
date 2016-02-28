@@ -9,7 +9,26 @@ import org.apache.tika.Tika;
 public class FileTypeFilter {
     private static Tika tika = new Tika();
 
-    public static void forEach(final File folder, final List<String> contentTypes, BiConsumer<File, String> callback) {
+    public static List<String> getMIMETypes(final File sortFolder) {
+        return Arrays.stream(sortFolder.listFiles())
+                     .map(file -> file.getName().replace(';', '/'))
+                     .collect(toList());
+    }
+
+    public static void forEach(final File sortFolder, BiConsumer<File, String> callback) {
+        for (File file : sortFolder.listFiles()) {
+            String mimeType = file.getName().replace(';', '/');
+            try (Scanner scanner = new Scanner(file)) {
+                while (scanner.hasNextLine()) {
+                    callback.accept(new File(scanner.nextLine()), mimeType);
+                }
+            } catch (Exception ex) {
+                System.err.println("Error iterating over files of MIME type " + mimeType);
+            }
+        }
+    }
+
+    private static void forEach(final File folder, final List<String> contentTypes, BiConsumer<File, String> callback) {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 forEach(file, contentTypes, callback);

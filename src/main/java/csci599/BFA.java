@@ -11,12 +11,9 @@ public class BFA {
     static HashMap<String,ArrayList<Double>> corrstrength = new HashMap<>();
     static HashMap<String,Integer> no_of_files = new HashMap<>();
     static List<String> ContentType;
-    BFA(){
+    BFA(final File sortFolder){
         //Adding Content types
-        ContentType = new ArrayList();
-        ContentType.add("image/jpg");
-        ContentType.add("image/png");
-        ContentType.add("text/plain");
+        ContentType = FileTypeFilter.getMIMETypes(sortFolder);
         //Initializing no_of-files,avgfrequency,correlation strength
         Iterator<String> content_itr = ContentType.iterator();
         ArrayList<Double> arr = new ArrayList();
@@ -26,13 +23,14 @@ public class BFA {
         while(content_itr.hasNext()){
             String s = content_itr.next();
             no_of_files.put(s,0);
+            // ok that we put the same ArrayList reference for every HashMap value because the ArrayList will never be mutated
             avgfrequency.put(s,arr);
             corrstrength.put(s,arr);
         }
     }
     //Analysing each files in a folder
     public void listFilesForFolder(final File folder){
-        FileTypeFilter.forEach(folder,ContentType, (file, contentType) -> {
+        FileTypeFilter.forEach(folder, (file, contentType) -> {
             //System.out.println(contentType);
             double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
             avg(contentType,fingerprint);                //Adding fingerprint to its avg
