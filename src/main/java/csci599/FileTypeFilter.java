@@ -16,11 +16,25 @@ public class FileTypeFilter {
     }
 
     public static void forEach(final File sortFolder, BiConsumer<File, String> callback) {
+        int line = 0, totalLines = 0;
+        for (File file : sortFolder.listFiles()) {
+            try (Scanner scanner = new Scanner(file)) {
+                while (scanner.hasNextLine()) {
+                    scanner.nextLine();
+                    totalLines++;
+                }
+            } catch (Exception ex) {
+                System.out.println("Error counting lines in " + file.getPath());
+            }
+        }
         for (File file : sortFolder.listFiles()) {
             String mimeType = file.getName().replace(';', '/');
+            System.out.println(mimeType);
             try (Scanner scanner = new Scanner(file)) {
                 while (scanner.hasNextLine()) {
                     callback.accept(new File(scanner.nextLine()), mimeType);
+                    line++;
+                    System.out.print((int)(100.0 * line / totalLines) + "%\r");
                 }
             } catch (Exception ex) {
                 System.err.println("Error iterating over files of MIME type " + mimeType);
