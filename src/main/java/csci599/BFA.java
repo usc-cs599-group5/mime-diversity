@@ -31,7 +31,7 @@ public class BFA {
         }
     }
     //Analysing each files in a folder
-    public void listFilesForFolder(final File folder) throws IOException{
+    public void listFilesForFolder(final File folder){
         FileTypeFilter.forEach(folder,ContentType, (file, contentType) -> {
             //System.out.println(contentType);
             double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
@@ -135,15 +135,13 @@ public class BFA {
         }
         corrstrength.replace(contenttype,temp);
     }
-    public void JsonConnect() throws IOException{
-        JSONGenerator.generateJSON("E:\\Sem 2\\CSCI 599\\fingerprint.json",avgfrequency, corrstrength);
-        /*String s = JSONGenerator.generateJSON(avgfrequency, corrstrength);
+    public void JsonConnect(){
         try{
-            Files.write(s.getBytes(),new File("E:\\Sem 2\\CSCI 599\\fingerprint.json"));
+            JSONGenerator.generateJSON("bfa.json",avgfrequency, corrstrength);
         }
         catch(Exception e){
             System.out.println("File Exception");
-        }*/
+        }
     }
     public static void displayFingerprintCorr(){
         Iterator<String> itr = ContentType.iterator();
