@@ -1,9 +1,9 @@
 package csci599;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.BiConsumer;
+import java.io.*;
+import java.util.*;
+import java.util.function.*;
+import static java.util.stream.Collectors.*;
 import org.apache.tika.Tika;
 
 public class FileTypeFilter {
@@ -24,6 +24,32 @@ public class FileTypeFilter {
                 if (contentTypes.contains(contentType)) {
                     callback.accept(file, contentType);
                 }
+            }
+        }
+    }
+
+    public static void sort(final File folder, final List<String> contentTypes) {
+        final Map<String, Writer> writers = contentTypes.stream().collect(toMap(Function.identity(), contentType -> {
+            try {
+                return new OutputStreamWriter(new FileOutputStream(contentType.replace('/', ';')), "UTF-8");
+            } catch (Exception ex) {
+                System.err.println("Error creating file.");
+                System.exit(-1);
+                return null;
+            }
+        }));
+        forEach(folder, contentTypes, (file, contentType) -> {
+            try {
+                writers.get(contentType).write(file.getCanonicalPath() + '\n');
+            } catch (IOException ex) {
+                System.err.println("Error writing to file.");
+            }
+        });
+        for (Writer writer : writers.values()) {
+            try {
+                writer.close();
+            } catch (IOException ex) {
+                System.err.println("Error closing file.");
             }
         }
     }

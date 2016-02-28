@@ -6,6 +6,8 @@ import java.util.*;
 public class App {
     public static void main(String[] args) {
         String usage = "Command line arguments:\n" +
+            "sort <folder> <mime types>\n" +
+            "    For each of the <mime types>, create a text file in the current directory listing files in <folder> of that MIME type.\n" +
             "bfa <folder>\n" +
             "    Perform byte frequency analysis on files in <folder>.\n" +
             "bfc <folder>\n" +
@@ -17,6 +19,9 @@ public class App {
             return;
         }
         switch (args[0]) {
+            case "sort":
+                FileTypeFilter.sort(new File(args[1]), Arrays.asList(Arrays.copyOfRange(args, 2, args.length)));
+                break;
             case "bfa":
             {
                 BFA bf = new BFA();
