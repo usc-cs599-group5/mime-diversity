@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import static java.util.stream.Collectors.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FHT {
     private static final int H = 16;
@@ -48,8 +49,8 @@ public class FHT {
         });
         // write json file
         // Andrew wanted to use Clojure but he was outvoted, so he gets to use Java streams instead :)
-        try (Writer out = new OutputStreamWriter(new FileOutputStream("fht.json"), "UTF-8")) {
-            out.write("{\n" + fingerprints.entrySet().stream()
+        try {
+            new ObjectMapper().writeValue(new File("fht.json"), fingerprints.entrySet().stream()
                 .filter(entry -> {
                     if (entry.getValue().numFiles == 0) {
                         System.out.println("Warning: No files found with MIME type " + entry.getKey());
@@ -57,12 +58,11 @@ public class FHT {
                     }
                     return true;
                 })
-                .map(entry -> "    \"" + entry.getKey() + "\": [\n" + Arrays.stream(entry.getValue().matrix)
+                .map(entry -> new AbstractMap.SimpleEntry(entry.getKey(), Arrays.stream(entry.getValue().matrix)
                     // dividing by numFiles here is equivalent to fingerprint formula in II.3.2 of paper
-                    .map(row -> "        [" + Arrays.stream(row).mapToObj(c -> "" + c / (double)entry.getValue().numFiles)
-                                                                .collect(joining(",")) + "]")
-                    .collect(joining(",\n")) + "\n    ]")
-                .collect(joining(",\n")) + "\n}\n");
+                    .map(row -> Arrays.stream(row).mapToDouble(c -> c / (double)entry.getValue().numFiles).toArray())
+                    .collect(toList())))
+                .collect(toMap(entry -> entry.getKey(), entry -> entry.getValue())));
         } catch (IOException ex) {
             System.err.println("Error writing fht.json");
         }
