@@ -28,5 +28,4 @@ public class JSONGenerator
     public static HashMap<String, BFAFingerprint> readJSON(String filePath) throws IOException {
         return mapper.readValue(new File(filePath), new TypeReference<Map<String, BFAFingerprint>>() { } );
     }
-    
 }
