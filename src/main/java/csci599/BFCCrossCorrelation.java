@@ -41,11 +41,13 @@ public class BFCCrossCorrelation
             try {
                 //calculate BFD of the input file
                 BFD=frequencyDist(BFD,file);
+                BFD=normalize(BFD);
+                BFD=compand(BFD);
             } catch (IOException ex) {
             }
             //generate BFC matrix of the input file
             double[][] matrix=new double[charSetSize][charSetSize];
-            matrix=generateCFMatrix(BFD);
+            matrix=generateCFMatrix(matrix,BFD);
             //matrix=calculateCS(matrix);
             //update fingerprint
             updateFPMatrix(matrix,MIMEType);
@@ -68,9 +70,37 @@ public class BFCCrossCorrelation
         return BFD;
     }
     
-    public double[][] generateCFMatrix(double[] BFD)
+    public double[] normalize(double[] BFD)
     {
-        double[][] matrix=new double[charSetSize][charSetSize];
+        double max=findMax(BFD);
+        for(int i=0;i<BFD.length;i++)
+        {
+            BFD[i]=BFD[i]/max;
+        }
+        return BFD;
+    }
+    
+    public double findMax(double[] BFD)
+    {
+        double max=BFD[0];
+        for(int i=1;i<BFD.length;i++)
+        {
+            if(max<BFD[i])
+                max=BFD[i];
+        }
+        return max;
+    }
+    
+    public double[] compand(double[] BFD)
+    {
+        for(int i=0;i<BFD.length;i++)
+            BFD[i]=Math.pow(BFD[i], 1.5);
+        return BFD;
+    }
+    
+    public double[][] generateCFMatrix(double[][] matrix,double[] BFD)
+    {
+        //double[][] matrix=new double[charSetSize][charSetSize];
         for(int j=0;j<matrix.length;j++)
         {
             for(int i=j+1;i<matrix.length;i++)
