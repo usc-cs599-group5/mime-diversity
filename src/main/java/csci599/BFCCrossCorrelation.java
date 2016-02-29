@@ -42,6 +42,7 @@ public class BFCCrossCorrelation
                 //calculate BFD of the input file
                 BFD=frequencyDist(BFD,file);
             } catch (IOException ex) {
+                System.err.println("Error reading file: " + file.getPath());
             }
             //generate BFC matrix of the input file
             double[][] matrix=new double[charSetSize][charSetSize];
@@ -51,9 +52,9 @@ public class BFCCrossCorrelation
             updateFPMatrix(matrix,MIMEType);
         });
         try {
-            new ObjectMapper().writeValue(new File("E:\\Sem 2\\CSCI 599\\bfc.json"), CorrMatrix);
+            new ObjectMapper().writeValue(new File("bfc.json"), CorrMatrix);
         } catch (IOException ex) {
-            System.err.println("Error writing fht.json");
+            System.err.println("Error writing bfc.json");
         }
     }
     
