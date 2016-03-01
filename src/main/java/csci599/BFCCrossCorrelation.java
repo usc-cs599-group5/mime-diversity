@@ -22,18 +22,20 @@ public class BFCCrossCorrelation
         MIMETypes=FileTypeFilter.getMIMETypes(sortFolder);
         //initialize fingerprint
         CorrMatrix=new HashMap<String,double[][]>();
-        double[][] matrix=new double[charSetSize][charSetSize];
-        matrix[0][0]=0;
-        for(int j=0;j<charSetSize;j++)
-        {
-            for(int i=j+1;i<charSetSize;i++)
-            {
-                matrix[j][i]=1.0;
-                matrix[i][j]=0.0;
-            }
-        }
         for(String s:MIMETypes)
+        {
+            double[][] matrix=new double[charSetSize][charSetSize];
+            matrix[0][0]=0;
+            for(int j=0;j<charSetSize;j++)
+            {
+                for(int i=j+1;i<charSetSize;i++)
+                {
+                    matrix[j][i]=1.0;
+                    matrix[i][j]=0.0;
+                }
+            }
             CorrMatrix.put(s, matrix);
+        }
     }
     
     public void listFilesForFolder(final File folder) throws IOException, FileNotFoundException, IOException{
@@ -55,8 +57,8 @@ public class BFCCrossCorrelation
             updateFPMatrix(matrix,MIMEType);
         });
         try {
-            new ObjectMapper().writeValue(new File("bfccc.json"), CorrMatrix);
-            System.out.println("bfccc.json created");
+            new ObjectMapper().writeValue(new File("bfc.json"), CorrMatrix);
+            System.out.println("bfc.json created");
         } catch (IOException ex) {
             System.err.println("Error writing bfc.json");
         }
