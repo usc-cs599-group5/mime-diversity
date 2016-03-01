@@ -12,11 +12,13 @@ public class App {
             "sort <folder> <mime types>\n" +
             "    For each of the <mime types>, create a text file in the current directory listing files in <folder> of that MIME type.\n" +
             "bfa <sort folder>\n" +
-            "    Perform byte frequency analysis using the file lists in <sort folder>.\n" +
+            "    Perform byte frequency analysis using the file lists in <sort folder>, saving the output to bfa.json.\n" +
             "bfc <sort folder>\n" +
-            "    Perform byte frequency correlation using the file lists in <sort folder>.\n" +
+            "    Perform byte frequency correlation using the file lists in <sort folder>, saving the output to bfc.json.\n" +
             "fht <sort folder>\n" +
-            "    Perform file header/trailer analysis using the file lists in <sort folder>.\n";
+            "    Perform file header/trailer analysis using the file lists in <sort folder>, saving the output to fht.json.\n" +
+            "diversity <folder>\n" +
+            "    Perform MIME diversity analysis on <folder>, saving the output to diversity.json.\n";
         if (args.length < 2) {
             System.out.print(usage);
             return;
@@ -45,6 +47,9 @@ public class App {
             }
             case "fht":
                 FHT.analyze(new File(args[1]));
+                break;
+            case "diversity":
+                FileTypeFilter.diversityAnalysis(new File(args[1]));
                 break;
             default:
                 System.out.print(usage);
