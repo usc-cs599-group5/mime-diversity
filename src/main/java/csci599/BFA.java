@@ -1,5 +1,4 @@
 package csci599;
-import com.google.common.io.Files;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +15,7 @@ public class BFA {
         ContentType = FileTypeFilter.getMIMETypes(sortFolder);
         //Initializing no_of-files,avgfrequency,correlation strength
         Iterator<String> content_itr = ContentType.iterator();
-        ArrayList<Double> arr = new ArrayList();
+        ArrayList<Double> arr = new ArrayList<>();
         for(int i = 0 ; i < 256;i++){
             arr.add(0.0);
         }
@@ -40,7 +39,7 @@ public class BFA {
             no_of_files.put(contentType, num+1);
             ArrayList<Double> cr = corrstrength.get(contentType);
         });
-        displayFingerprintCorr();
+        //displayFingerprintCorr();
         JsonConnect();
         
     }
@@ -50,8 +49,7 @@ public class BFA {
         for(int i = 0; i < 256;i++){
             frequency[i] = 0;
         }        
-        try{
-            FileInputStream in = new FileInputStream(f);
+        try(FileInputStream in = new FileInputStream(f)){
             int c;
             //Calculating frequecy of words
             while ((c = in.read()) != -1){
@@ -71,14 +69,14 @@ public class BFA {
             fingerprint = companding(fingerprint);
         }
         catch(Exception e){
-            System.out.println("File not found exception");
+            System.out.println("Error analyzing file: " + f.getPath());
         }
         return fingerprint;
     }
     public void avg(String Contenttype,double[] fingerprint){
             //Updating avg fingerprint
             ArrayList<Double> arr = avgfrequency.get(Contenttype);
-            ArrayList<Double> newavg = new ArrayList();
+            ArrayList<Double> newavg = new ArrayList<>();
             Integer num = no_of_files.get(Contenttype);
             int display = 1;
             for(int i = 0 ; i < 256 ; i++){
@@ -113,7 +111,7 @@ public class BFA {
         }
         //Implementing Bell Curve
         double sigma = 0.0375;
-        ArrayList<Double> corrfactor = new ArrayList();
+        ArrayList<Double> corrfactor = new ArrayList<>();
         for(int i = 0 ; i < 256 ; i++){
             double corfact = Math.pow(Math.E,((x[i]*x[i]) * (-1))/(2*sigma));
             //if(i =='a') System.out.println("Hi  " + corfact);
@@ -125,7 +123,7 @@ public class BFA {
     public void addCorrelation(ArrayList<Double> corrfactor,String contenttype){
         int PNF = no_of_files.get(contenttype);
         //System.out.println("No of Files" + PNF);
-        ArrayList<Double> temp = new ArrayList();
+        ArrayList<Double> temp = new ArrayList<>();
         ArrayList<Double> old = corrstrength.get(contenttype);
         for(int i = 0 ; i < 256 ; i++){
             Double NCS = ((old.get(i) * PNF) + corrfactor.get(i))/ (PNF+1);
@@ -138,7 +136,7 @@ public class BFA {
             JSONGenerator.generateJSON("bfa.json",avgfrequency, corrstrength);
         }
         catch(Exception e){
-            System.out.println("File Exception");
+            System.out.println("Error saving bfa.json");
         }
     }
     public static void displayFingerprintCorr(){
