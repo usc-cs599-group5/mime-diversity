@@ -99,7 +99,7 @@ public class BFCCrossCorrelation
     public double[] compand(double[] BFD)
     {
         for(int i=0;i<BFD.length;i++)
-            BFD[i]=Math.pow(BFD[i], 1.5);
+            BFD[i]=Math.pow(BFD[i], (1/1.5));
         return BFD;
     }
     

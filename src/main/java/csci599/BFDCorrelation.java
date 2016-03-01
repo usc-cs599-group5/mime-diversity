@@ -163,7 +163,7 @@ public class BFDCorrelation
     public double Compand(double input)
     {
         double beta=1.5;
-        return Math.pow(input, beta);
+        return Math.pow(input, (1/beta));
     }
     
     public double findCorrelationStrength(double correlationFactor)
