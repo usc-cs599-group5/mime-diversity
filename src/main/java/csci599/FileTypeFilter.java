@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 import static java.util.stream.Collectors.*;
 import org.apache.tika.Tika;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FileTypeFilter {
     private static Tika tika = new Tika();
@@ -73,6 +74,25 @@ public class FileTypeFilter {
             } catch (IOException ex) {
                 System.err.println("Error closing file.");
             }
+        }
+    }
+
+    public static void diversityAnalysis(final File folder) {
+        final Map<String, Integer> diversity = new HashMap<>();
+        forEachInFolder(folder, file -> {
+            String contentType;
+            try {
+                contentType = tika.detect(file);
+            } catch (IOException ex) {
+                System.err.println("Tika could not read file: " + file.getPath());
+                return;
+            }
+            diversity.put(contentType, diversity.getOrDefault(contentType, 0) + 1);
+        });
+        try {
+            new ObjectMapper().writeValue(new File("diversity.json"), diversity);
+        } catch (IOException ex) {
+            System.err.println("Error writing diversity.json");
         }
     }
 
