@@ -37,7 +37,7 @@ public class FileTypeFilter {
                 while (scanner.hasNextLine()) {
                     callback.accept(new File(scanner.nextLine()), mimeType);
                     line++;
-                    System.out.print((int)(100.0 * line / totalLines) + "%\r");
+                    System.out.print(100 * line / totalLines + "%\r");
                 }
             } catch (Exception ex) {
                 System.err.println("Error iterating over files of MIME type " + mimeType);
