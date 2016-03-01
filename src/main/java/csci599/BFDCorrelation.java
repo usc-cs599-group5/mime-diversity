@@ -24,7 +24,7 @@ public class BFDCorrelation
         }
         noOfMIMETypes=15;
         charSetSize=256;
-        ContentType = new ArrayList();
+        ContentType = new ArrayList<>();
         ContentType.add("image/jpg");
         ContentType.add("image/png");
         ContentType.add("text/plain");
@@ -125,11 +125,12 @@ public class BFDCorrelation
     public double[] BFD(String filePath) throws FileNotFoundException, IOException
     {
         double[] freqDist=new double[charSetSize];
-        FileInputStream in = new FileInputStream(filePath);
-        int ch=-1;
-        while((ch=in.read())!=-1)
-        {
-            freqDist[ch]++;
+        try (FileInputStream in = new FileInputStream(filePath)) {
+            int ch=-1;
+            while((ch=in.read())!=-1)
+            {
+                freqDist[ch]++;
+            }
         }
         return freqDist;
     }

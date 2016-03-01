@@ -68,10 +68,11 @@ public class BFCCrossCorrelation
     {
         for(int i=0;i<BFD.length;i++)
             BFD[i]=0.0;
-        FileInputStream in = new FileInputStream(file);
-        int c=0;
-        while((c=in.read())!=-1)
-            BFD[c]++;
+        try (FileInputStream in = new FileInputStream(file)) {
+            int c=0;
+            while((c=in.read())!=-1)
+                BFD[c]++;
+        }
         return BFD;
     }
     
