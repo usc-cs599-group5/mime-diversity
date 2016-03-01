@@ -161,10 +161,10 @@ var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
                  div.transition()		
                 .duration(200)		
                 .style("opacity", .9);		
-                 div	.html( "Byte No :" + i+ "<br/>"  + "Co-relation Strength : "+dat)	
+                 div	.html( "Byte No :" + i+ "<br/>"  + "Correlation Strength : "+dat)	
                 .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY - 28) + "px")
-                .style("width","150px")
+                .style("width","160px")
                 .style("background","pink");
             }
             function mmove(){
@@ -216,7 +216,7 @@ var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
     </td>
     <td>
         <div><hr id = "bluen" >: Byte Frequency Distribution</div>
-        <div><hr id = "redn"  >: Corelation Strength</div>
+        <div><hr id = "redn"  >: Correlation Strength</div>
     </td>
     </tr>
     </table>
