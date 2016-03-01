@@ -23,6 +23,7 @@ public class BFCCrossCorrelation
         //initialize fingerprint
         CorrMatrix=new HashMap<String,double[][]>();
         double[][] matrix=new double[charSetSize][charSetSize];
+        matrix[0][0]=0;
         for(int j=0;j<charSetSize;j++)
         {
             for(int i=j+1;i<charSetSize;i++)
@@ -54,7 +55,8 @@ public class BFCCrossCorrelation
             updateFPMatrix(matrix,MIMEType);
         });
         try {
-            new ObjectMapper().writeValue(new File("bfc.json"), CorrMatrix);
+            new ObjectMapper().writeValue(new File("bfccc.json"), CorrMatrix);
+            System.out.println("bfccc.json created");
         } catch (IOException ex) {
             System.err.println("Error writing bfc.json");
         }
@@ -102,7 +104,7 @@ public class BFCCrossCorrelation
     public double[][] generateCFMatrix(double[][] matrix,double[] BFD)
     {
         //double[][] matrix=new double[charSetSize][charSetSize];
-        for(int j=0;j<matrix.length;j++)
+        for(int j=0 ;j<matrix.length-1;j++)
         {
             for(int i=j+1;i<matrix.length;i++)
             {
@@ -115,7 +117,7 @@ public class BFCCrossCorrelation
     
     public double[][] calculateCS(double[][] matrix)
     {
-        for(int j=1;j<matrix.length;j++)
+        for(int j=0;j<matrix.length-1;j++)
         {
             for(int i=j+1;i<matrix[j].length;i++)
                 matrix[j][i]=CorrelationStrength(matrix[i][j]);
@@ -132,7 +134,7 @@ public class BFCCrossCorrelation
     {
         double[][] FPMatrix=CorrMatrix.get(MIMEType);
         int noOfFiles=(int) FPMatrix[0][0];
-        for(int j=0;j<FPMatrix.length;j++)
+        for(int j=0;j<FPMatrix.length-1;j++)
         {
             for(int i=j+1;i<FPMatrix[j].length;i++)
             {
@@ -142,6 +144,7 @@ public class BFCCrossCorrelation
             }
         }
         FPMatrix[0][0]++;
+        //System.out.println(FPMatrix[0][0]);
         CorrMatrix.replace(MIMEType,FPMatrix);
     }
 }

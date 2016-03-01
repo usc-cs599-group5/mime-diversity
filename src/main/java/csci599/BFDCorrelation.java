@@ -116,7 +116,10 @@ public class BFDCorrelation
         double[] avgAL=new double[noOfMIMETypes];
         avgAL=avg(assuranceLevel,avgAL);
         int matchedMIMEType=findMatch(avgAL);
-        return MIMEType[matchedMIMEType];
+        if(matchedMIMEType<=14)
+            return MIMEType[matchedMIMEType];
+        else
+            return "MIMEType Not Determined";
     }
     
     public double[] BFD(String filePath) throws FileNotFoundException, IOException
@@ -204,11 +207,11 @@ public class BFDCorrelation
     
     public int findMatch(double[] array)
     {
-        int match=0;
-        double max=array[0];
+        int match=-1;
+        double max=0.99;
         for(int i=0;i<array.length;i++)
         {
-            if(max<array[i])
+            if(max<=array[i])
             {
                 max=array[i];
                 match=i;
