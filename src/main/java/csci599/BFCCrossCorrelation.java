@@ -17,7 +17,7 @@ public class BFCCrossCorrelation
     
     BFCCrossCorrelation(final File sortFolder)
     {
-        noOfMIMETypes=15;
+        noOfMIMETypes=14;
         charSetSize=256;
         MIMETypes=FileTypeFilter.getMIMETypes(sortFolder);
         //initialize fingerprint
