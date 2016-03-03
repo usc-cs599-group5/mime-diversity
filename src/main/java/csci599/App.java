@@ -13,8 +13,10 @@ public class App {
             "    For each of the <mime types>, create a text file in the current directory listing files in <folder> of that MIME type.\n" +
             "bfa <sort folder>\n" +
             "    Perform byte frequency analysis using the file lists in <sort folder>, saving the output to bfa.json.\n" +
+            "bfd <sort folder>\n" +
+            "    Perform byte frequency distribution correlation using bfa.json and the file lists in <sort folder>, saving the output to bfd-I-a.json, bfd-I-b.json, and bfd-I-c.json.\n" +
             "bfc <sort folder>\n" +
-            "    Perform byte frequency correlation using the file lists in <sort folder>, saving the output to bfc.json.\n" +
+            "    Perform byte frequency cross correlation using the file lists in <sort folder>, saving the output to bfc.json.\n" +
             "fht <sort folder>\n" +
             "    Perform file header/trailer analysis using the file lists in <sort folder>, saving the output to fht.json.\n" +
             "diversity <folder>\n" +
@@ -34,6 +36,9 @@ public class App {
                 bf.listFilesForFolder(folder);
                 break;
             }
+            case "bfd":
+                new BFDCorrelationAnalysis().listFilesForFolder(new File(args[1]));
+                break;
             case "bfc":
             {
                 final File folder=new File(args[1]);

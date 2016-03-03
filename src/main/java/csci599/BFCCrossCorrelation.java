@@ -10,14 +10,12 @@ import java.util.List;
 
 public class BFCCrossCorrelation
 {
-    static int noOfMIMETypes;
     static int charSetSize;
     static List<String> MIMETypes;
     static HashMap<String,double[][]> CorrMatrix;
     
     BFCCrossCorrelation(final File sortFolder)
     {
-        noOfMIMETypes=14;
         charSetSize=256;
         MIMETypes=FileTypeFilter.getMIMETypes(sortFolder);
         //initialize fingerprint

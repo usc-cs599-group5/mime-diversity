@@ -13,14 +13,14 @@ import java.util.Map;
 
 public class BFDCorrelationAnalysis
 {
-    //static int noOfMIMETypes;
-    static int charSetSize;
-    //static List<String> MIMETypes;
-    static HashMap<String,double[]> bfd;
-    static HashMap<String,double[]> cs;
-    static HashMap<String, ArrayList<String>> listOfFiles;
-    static HashMap<String, double[]> newFileBFD;
-    static HashMap<String, int[]> HighLowC;
+    //int noOfMIMETypes;
+    int charSetSize;
+    //List<String> MIMETypes;
+    HashMap<String,double[]> bfd = new HashMap<>();
+    HashMap<String,double[]> cs = new HashMap<>();
+    HashMap<String, ArrayList<String>> listOfFiles = new HashMap<>();
+    HashMap<String, double[]> newFileBFD = new HashMap<>();
+    HashMap<String, int[]> HighLowC = new HashMap<>();
     
     BFDCorrelationAnalysis()
     {
@@ -32,7 +32,6 @@ public class BFDCorrelationAnalysis
         } catch (IOException ex) {
             System.out.println("Error reading bfa.json. Make sure it exists.");
         }
-        listOfFiles=new HashMap<String, ArrayList<String>>();
         for(Object MIMEType:json.keySet())
         {
             double[] bfdA=new double[json.get(MIMEType).BFD.size()];
@@ -45,15 +44,13 @@ public class BFDCorrelationAnalysis
             bfd.put((String) MIMEType, bfdA);
             listOfFiles.put((String) MIMEType, fileNames);
         }
-        HighLowC=new HashMap<String, int[]>();
-        newFileBFD=new HashMap<String, double[]>();
     }
     
-    public void listFilesForFolder(final File folder) throws IOException, FileNotFoundException, IOException{
+    public void listFilesForFolder(final File folder) {
         FileTypeFilter.forEach(folder, (file, MIMEType) -> {
             double[] BFD=new double[charSetSize];
             try {
-                ArrayList fileName=listOfFiles.get(MIMEType);
+                ArrayList<String> fileName=listOfFiles.get(MIMEType);
                 fileName.add(file.getName());
                 listOfFiles.replace(MIMEType, fileName);
                 //calculate BFD of the input file
@@ -82,7 +79,7 @@ public class BFDCorrelationAnalysis
         }
     }
     
-    public double[] frequencyDist(double[] BFD,File file) throws IOException,FileNotFoundException, IOException
+    public double[] frequencyDist(double[] BFD,File file) throws IOException,FileNotFoundException
     {
         for(int i=0;i<BFD.length;i++)
             BFD[i]=0.0;
