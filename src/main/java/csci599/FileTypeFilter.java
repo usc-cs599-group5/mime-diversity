@@ -58,6 +58,7 @@ public class FileTypeFilter {
         }));
         // sort files by MIME type
         forEachInFolder(folder, file -> {
+            if (file.length() == 0) return;
             try {
                 String contentType = tika.detect(file);
                 if (contentTypes.contains(contentType)) {
@@ -100,7 +101,7 @@ public class FileTypeFilter {
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 forEachInFolder(file, callback);
-            } else if (file.length() > 0) {
+            } else {
                 callback.accept(file);
             }
         }
