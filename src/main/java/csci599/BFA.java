@@ -35,14 +35,10 @@ public class BFA {
     }
     //Analysing each files in a folder
     public void listFilesForFolder(final File folder){
-        //System.out.println("Creating fingerprints:");
-        
-        
-      
+        System.out.println("Creating fingerprints:");
         for (String contentType : FileTypeFilter.getMIMETypes(folder)) {
             no_of_files.put(contentType, 0);
         }
-        
         FileTypeFilter.forEach(folder, (file, contentType) -> {
             //System.out.println(contentType);
             double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
