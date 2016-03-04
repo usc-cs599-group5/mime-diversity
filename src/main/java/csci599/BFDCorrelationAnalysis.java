@@ -27,7 +27,7 @@ public class BFDCorrelationAnalysis
         charSetSize=256;
         Map<String, BFAFingerprint> json = null;
         try {
-            json = JSONGenerator.readJSON("bfa.json");
+            json = JSONGenerator.readJSON("E:\\Sem 2\\CSCI 599\\tika-test\\BFA\\bfa75.json");
             //System.out.println(json);
         } catch (IOException ex) {
             System.out.println("Error reading bfa.json. Make sure it exists.");
@@ -45,6 +45,7 @@ public class BFDCorrelationAnalysis
             listOfFiles.put((String) MIMEType, fileNames);
         }
     }
+   
     
     public void listFilesForFolder(final File folder) {
         FileTypeFilter.forEach(folder, (file, MIMEType) -> {
@@ -57,14 +58,14 @@ public class BFDCorrelationAnalysis
                 BFD=frequencyDist(BFD,file);
                 BFD=normalize(BFD);
                 BFD=compand(BFD);
-                for(int i=0;i<BFD.length;i++)
-                    System.out.println(BFD[i]);
-                System.out.println("");
+                //for(int i=0;i<BFD.length;i++)
+                //    System.out.println(BFD[i]);
+                //System.out.println("");
                 newFileBFD.put(file.getName(), BFD);
                 double[] CS=new double[charSetSize];
                 for(int i=0;i<CS.length;i++)
                     CS[i]=BFD[i];
-                CS=calculateCS(BFD,MIMEType);
+                CS=calculateCS(CS,MIMEType);
                 int[] HighLow=new int[4];
                 HighLow=findHL(HighLow,CS);
                 HighLowC.put(file.getName(), HighLow);
