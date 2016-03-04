@@ -21,7 +21,6 @@ public class BFA {
         }
         while(content_itr.hasNext()){
             String s = content_itr.next();
-            no_of_files.put(s,0);
             // ok that we put the same ArrayList reference for every HashMap value because the ArrayList will never be mutated
             avgfrequency.put(s,arr);
             corrstrength.put(s,arr);
@@ -29,15 +28,27 @@ public class BFA {
     }
     //Analysing each files in a folder
     public void listFilesForFolder(final File folder){
+        System.out.println("Creating fingerprints:");
+        for (String contentType : FileTypeFilter.getMIMETypes(folder)) {
+            no_of_files.put(contentType, 0);
+        }
         FileTypeFilter.forEach(folder, (file, contentType) -> {
             //System.out.println(contentType);
             double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
             avg(contentType,fingerprint);                //Adding fingerprint to its avg
+            int num = no_of_files.get(contentType);      //Updating total no of files
+            no_of_files.put(contentType, num+1);
+        });
+        System.out.println("Determining correlation strengths:");
+        for (String contentType : FileTypeFilter.getMIMETypes(folder)) {
+            no_of_files.put(contentType, 0);
+        }
+        FileTypeFilter.forEach(folder, (file, contentType) -> {
+            double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
             ArrayList<Double> corrfactor = findcorrelation(fingerprint,contentType); //Calulating correlation factor
             addCorrelation(corrfactor,contentType);
             int num = no_of_files.get(contentType);      //Updating total no of files
             no_of_files.put(contentType, num+1);
-            ArrayList<Double> cr = corrstrength.get(contentType);
         });
         //displayFingerprintCorr();
         JsonConnect();
