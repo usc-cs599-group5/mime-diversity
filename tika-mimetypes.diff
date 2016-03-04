@@ -1,0 +1,52 @@
+diff --git a/tika-core/src/main/resources/org/apache/tika/mime/tika-mimetypes.xml b/tika-core/src/main/resources/org/apache/tika/mime/tika-mimetypes.xml
+index d0f7df9..0990352 100644
+--- a/tika-core/src/main/resources/org/apache/tika/mime/tika-mimetypes.xml
++++ b/tika-core/src/main/resources/org/apache/tika/mime/tika-mimetypes.xml
+@@ -194,6 +194,7 @@
+     <tika:link>http://www.digitalpreservation.gov/formats/fdd/fdd000317.shtml</tika:link>
+     <magic priority="50">
+       <match value="SIMPLE  =                    T" type="string" offset="0"/>
++      <match value="SIMPLE  =                T" type="string" offset="0"/>
+     </magic>
+     <glob pattern="*.fits"/>
+     <glob pattern="*.fit"/>
+@@ -277,6 +278,9 @@
+     <sub-class-of type="text/plain"/>
+     <_comment>JavaScript Source Code</_comment>
+     <glob pattern="*.js"/>
++    <magic priority="20">
++      <match value="document.write" type="string" offset="0"/>
++    </magic>
+   </mime-type>
+ 
+   <mime-type type="application/json">
+@@ -3545,6 +3549,9 @@
+   <mime-type type="application/x-netcdf">
+     <glob pattern="*.nc"/>
+     <glob pattern="*.cdf"/>
++    <magic priority="30">
++      <match value="CDF\x01" type="string" offset="0"/>
++    </magic>
+   </mime-type>
+   <mime-type type="application/x-pkcs12">
+     <glob pattern="*.p12"/>
+@@ -5341,6 +5348,7 @@
+       <match value="&lt;H1" type="string" offset="0"/>
+       <match value="&lt;!doctype HTML" type="string" offset="0"/>
+       <match value="&lt;!DOCTYPE html" type="string" offset="0"/>
++      <match value="&lt;script" type="string" offset="0"/>
+     </magic>
+     <glob pattern="*.html"/>
+     <glob pattern="*.htm"/>
+@@ -6459,4 +6467,11 @@
+     <sub-class-of type="text/plain"/>
+   </mime-type>
+ 
++  <mime-type type="application/x-activemime">
++    <glob pattern="*.mso"/>
++    <magic priority="30">
++      <match value="ActiveMime" type="string" offset="0"/>
++    </magic>
++  </mime-type>
++
+ </mime-info>
