@@ -220,11 +220,6 @@ function select() {
   var chart = d3.select("#chart")
       .selectAll("div")
       .data([].concat.apply([], data[document.getElementById("choose").value]))
-      .on("click",function() { 
-         var x0 = x.invert(d3.mouse(this)[0]);
-          
-          alert("hello!" + x0); })
-       
   chart.enter().append("div")
       .style("position", "absolute")
       .style("width", w + "px")
@@ -232,14 +227,17 @@ function select() {
       .style("left", function(d, i) { return (i % 256) * w + "px" })
       .style("top", function(d, i) { return Math.floor(i / 256) * h + "px" })
   chart.style("background-color", function(d) {
-    var b = Math.round((1 - d) * 255)
-    return "rgb(" + b + "," + b + "," + b + ")"
-        
-  })
- 
-
-		
-                             
+        var b = Math.round((1 - d) * 255)
+        return "rgb(" + b + "," + b + "," + b + ")"
+      })
+      .attr("title", function(d, i) {
+        return "byte position: " + Math.floor(i / 256) + "\nbyte value: " + (i % 256) + "\ncorrelation strength: " + d.toFixed(2)
+      })
+      /*.attr("onMouseMove", function(d, i) {
+        return function() {
+          document.title = "byte position: " + Math.floor(i / 256) + ", byte value: " + (i % 256) + ", correlation strength: " + d.toFixed(2)
+        }
+      })*/
 }
 </script>
   </head>
