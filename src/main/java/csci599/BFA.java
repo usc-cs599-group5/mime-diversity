@@ -10,6 +10,9 @@ public class BFA {
     static HashMap<String,ArrayList<Double>> corrstrength = new HashMap<>();
     static HashMap<String,Integer> no_of_files = new HashMap<>();
     static List<String> ContentType;
+    static int newtypecount = 0;
+    static HashMap<String,Integer> Type_Count = new HashMap<>();
+    
     BFA(final File sortFolder){
         //Adding Content types
         ContentType = FileTypeFilter.getMIMETypes(sortFolder);
@@ -24,6 +27,7 @@ public class BFA {
             // ok that we put the same ArrayList reference for every HashMap value because the ArrayList will never be mutated
             avgfrequency.put(s,arr);
             corrstrength.put(s,arr);
+            Type_Count.put(s,0);
         }
     }
     //Analysing each files in a folder
@@ -169,4 +173,37 @@ public class BFA {
             System.out.println("");
         }
     }
+    public static void detectUnknown(File f){
+        double[] newfingerprint = freqAnalysis(f);
+        //Boolean isNew = true;
+        double maxalevel = 0;
+        String mimetype = "";
+        //Computing correlation factor score for each file type
+        for(String s : ContentType){
+            ArrayList<Double> corscore = findcorrelation(newfingerprint,s);
+            Double sum = 0.0;
+            for(Double d: corscore){
+                sum += (1-Math.abs(d));
+            }
+            //Computing and adding assurance level Assurance level
+            Double alevel = sum/256;
+            if(alevel >= maxalevel){
+                maxalevel = alevel;
+                mimetype = s;
+            }
+        }        //isNew = false;
+        Integer newcount = Type_Count.get(mimetype) + 1;
+        Type_Count.put(mimetype,newcount);
+        
+        /*if(isNew == true){
+            System.out.println("It is new type");
+            newtypecount++;
+            String d = "NewType_" + newtypecount;
+            ContentType.add(d);
+            ArrayList<Double> al = new ArrayList();
+            for(int i = 0 ; i < 256;i++){
+                al.add(newfingerprint[i]);
+            }
+                 */     
+    }            
 }
