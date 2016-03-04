@@ -36,6 +36,13 @@ public class App {
                 bf.listFilesForFolder(folder);
                 break;
             }
+            case "bfaDetect":
+            {
+                final File folder = new File(args[1]);
+                BFA bf = new BFA(folder);
+                bf.listFilesForFolder1(folder);
+                break;
+            }
             case "bfd":
                 new BFDCorrelationAnalysis().listFilesForFolder(new File(args[1]));
                 break;
