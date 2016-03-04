@@ -37,10 +37,10 @@
     <script src="d3/d3.min.js" charset="utf-8"></script>
     <script type="text/javascript">
         
-var data = {"Error loading fht.json": []}
+var data
 
 function load() {
-  d3.json("fht.json", function(error, json) {
+  d3.json("vis-json/fht.json", function(error, json) {
     data = json
     loadDone()
   })

@@ -76,10 +76,10 @@
 		</style>
         <script>
             flag = false;
-var data = {"Error loading bfa.json": {BFD: [], CS: []}}
+var data
 
 function load() {
-  d3.json("bfa.json", function(error, json) {
+  d3.json("vis-json/bfa.json", function(error, json) {
     data = json
     mainpart()
   })
