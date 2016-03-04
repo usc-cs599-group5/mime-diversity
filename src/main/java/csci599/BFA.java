@@ -1,4 +1,5 @@
 package csci599;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,7 +174,7 @@ public class BFA {
             System.out.println("");
         }
     }
-    public static void detectUnknown(File f){
+    public static void detectUnknown(File f) throws IOException{
         double[] newfingerprint = freqAnalysis(f);
         //Boolean isNew = true;
         double maxalevel = 0;
@@ -194,6 +195,7 @@ public class BFA {
         }        //isNew = false;
         Integer newcount = Type_Count.get(mimetype) + 1;
         Type_Count.put(mimetype,newcount);
+        new ObjectMapper().writeValue(new File("Detected_Mime_type.json"), Type_Count);
         
         /*if(isNew == true){
             System.out.println("It is new type");
