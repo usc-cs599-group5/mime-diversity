@@ -204,7 +204,7 @@
                 return "translate(" + arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
             })
             .attr("text-anchor", "middle")                          //center the text on it's origin
-            .text(function(d, i) { return data[i].label; });        //get the label from our original data array
+            .text(function(d, i) { return data[i].value >= 10000 ? data[i].label : ""; });        //get the label from our original data array
         
     </script>
   </body>
