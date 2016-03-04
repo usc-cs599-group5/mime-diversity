@@ -59,6 +59,6 @@ json - Contains the JSON files, most of which are used by visualizations. We tri
 	fht.json - used by vis/fht.htm (Part 6)
 	fhtDetect/*.json - Groups similar application/octet-stream files together using FHT. First number is assurance cutoff and second number is number of bytes per file to compare. Used to create the final tika-mimetypes.xml. (Part 7a)
 	diversity.json - Used by diversity-after.htm and diversity-after-bar.htm (Part 7d)
-Extra_credit_part_1
-	EditValue.json - Contains Edit Distance
-	similarity_scores -Contains Jaccard similarity 
+	Extra_credit_part_1/EditValue.json - Contains Edit Distance
+	Extra_credit_part_1/similarity_scores.txt - Contains Jaccard similarity 
+	Extra_credit_part_1/Cosine22.json - Contains cosine distances
