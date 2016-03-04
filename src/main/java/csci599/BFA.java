@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BFA {
     static HashMap<String,ArrayList<Double>> avgfrequency = new HashMap<>();
@@ -33,10 +36,14 @@ public class BFA {
     }
     //Analysing each files in a folder
     public void listFilesForFolder(final File folder){
-        System.out.println("Creating fingerprints:");
+        //System.out.println("Creating fingerprints:");
+        
+        
+      
         for (String contentType : FileTypeFilter.getMIMETypes(folder)) {
             no_of_files.put(contentType, 0);
         }
+        
         FileTypeFilter.forEach(folder, (file, contentType) -> {
             //System.out.println(contentType);
             double[] fingerprint = freqAnalysis(file);   //Calculating fingerprint for a file
@@ -57,6 +64,28 @@ public class BFA {
         });
         //displayFingerprintCorr();
         JsonConnect();
+
+   }
+   public void listFilesForFolder1(final File folder){     
+        Map<String, BFAFingerprint> json = null;
+        try {
+            json = JSONGenerator.readJSON("bfa.json");
+            //System.out.println(json);
+        } catch (IOException ex) {
+            System.out.println("Error reading bfa.json. Make sure it exists.");
+        }
+        for(Object key:json.keySet())
+        {
+            avgfrequency.put((String) key, json.get(key).BFD);
+            ContentType.add((String)key);
+        }
+        FileTypeFilter.forEach(folder, (file, contentType) ->{
+            try {    
+                detectUnknown(file);
+            } catch (IOException ex) {
+                System.out.println("Exception Occured");;
+            }
+        });
         
     }
     public static double[] freqAnalysis(File f){
