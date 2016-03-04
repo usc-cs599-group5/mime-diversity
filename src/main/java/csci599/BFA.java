@@ -16,6 +16,8 @@ public class BFA {
     static List<String> ContentType;
     static int newtypecount = 0;
     static HashMap<String,Integer> Type_Count = new HashMap<>();
+    static HashMap<String,String> FileType = new HashMap<>();
+    static HashMap<String,Double> Assurancelvl = new HashMap<>();
     
     BFA(final File sortFolder){
         //Adding Content types
@@ -61,7 +63,7 @@ public class BFA {
         JsonConnect();
 
    }
-   public void listFilesForFolder1(final File folder){     
+   public void listFilesForFolder1(final File folder) throws IOException{     
         Map<String, BFAFingerprint> json = null;
         try {
             json = JSONGenerator.readJSON("bfa.json");
@@ -82,6 +84,9 @@ public class BFA {
                 System.out.println("Exception Occured");;
             }
         });
+        new ObjectMapper().writeValue(new File("Detected_Mime_type_count.json"), Type_Count);
+        new ObjectMapper().writeValue(new File("File_and_mimetype.json"), FileType);
+        new ObjectMapper().writeValue(new File("File_and_alevel.json"), Assurancelvl);
         
     }
     public static double[] freqAnalysis(File f){
@@ -220,7 +225,8 @@ public class BFA {
         }        //isNew = false;
         Integer newcount = Type_Count.get(mimetype) + 1;
         Type_Count.put(mimetype,newcount);
-        new ObjectMapper().writeValue(new File("Detected_Mime_type.json"), Type_Count);
+        FileType.put(f.getPath(),mimetype);
+        Assurancelvl.put(f.getPath(),maxalevel);
         
         /*if(isNew == true){
             System.out.println("It is new type");
