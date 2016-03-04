@@ -63,7 +63,7 @@ public class BFA {
         JsonConnect();
 
    }
-   public void listFilesForFolder1(final File folder) throws IOException{     
+   public void listFilesForFolder1(final File folder) {
         Map<String, BFAFingerprint> json = null;
         try {
             json = JSONGenerator.readJSON("bfa.json");
@@ -84,10 +84,13 @@ public class BFA {
                 System.out.println("Exception Occured");;
             }
         });
-        new ObjectMapper().writeValue(new File("Detected_Mime_type_count.json"), Type_Count);
-        new ObjectMapper().writeValue(new File("File_and_mimetype.json"), FileType);
-        new ObjectMapper().writeValue(new File("File_and_alevel.json"), Assurancelvl);
-        
+        try {
+            new ObjectMapper().writeValue(new File("Detected_Mime_type_count.json"), Type_Count);
+            new ObjectMapper().writeValue(new File("File_and_mimetype.json"), FileType);
+            new ObjectMapper().writeValue(new File("File_and_alevel.json"), Assurancelvl);
+        } catch (IOException ex) {
+            System.err.println("Error writing JSON files");
+        }
     }
     public static double[] freqAnalysis(File f){
         double[] fingerprint = new double[256];

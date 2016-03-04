@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class App {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String usage = "Command line arguments:\n" +
             "sort <folder> <mime types>\n" +
             "    For each of the <mime types>, create a text file in the current directory listing files in <folder> of that MIME type.\n" +
@@ -64,7 +64,11 @@ public class App {
                 FileTypeFilter.diversityAnalysis(new File(args[1]));
                 break;
             case "separatejson":
-                separateBFDJson sjson=new separateBFDJson(args[1]);
+                try {
+                    separateBFDJson sjson=new separateBFDJson(args[1]);
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
                 break;
             default:
                 System.out.print(usage);
