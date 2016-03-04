@@ -50,12 +50,12 @@ tika-mimetypes.xml - our modified Tika fingerprint file
 tika-mimetypes.diff - diff of our tika-mimetypes.xml compared to the one in Tika 1.11
 vis - contains d3 visualizations (these are self explanatory)
 json - Contains the JSON files, most of which are used by visualizations. We tried to use d3.json() to load them but ran into cross-site restriction issues, so we ended up copy-pasting the JSON into the visualization HTML, unfortunately.
-	bfa.json - used by vis/bfa.htm                   (Part 4b)
-	bfc.json - used by vis/bfc.htm				 (Part 5c)	
-	bfd-I-a.json, bfd-I-b.json, bfd-I-c.json - used by vis/bfd1.htm								 (Part 5b)	
-	fht.json - used by vis/fht.htm
- 	bfaDetect/Detected_Mime_type_count.json - used by vis/bfd2.htm								 (Part 5a)
-	bfaDetect/File_and_mimetype.json - matches application/octet-stream files to the most similar of 14 MIME types, according to BFA						 (Part 5a)
-	bfaDetect/File_and_alevel.json - contains assurance level of those MIME type matches						 (Part 5a)
-	fhtDetect/*.json - Groups similar application/octet-stream files together using FHT. First number is assurance cutoff and second number is number of bytes per file to compare. Used to create the final tika-mimetypes.xml.				 (Part 6b)
-	diversity.json - Used by diversity.htm		 (Part 7d)
+	bfa.json - used by vis/bfa.htm (Part 4)
+	bfd-I-a.json, bfd-I-b.json, bfd-I-c.json - used by vis/bfd1.htm (Part 5a, 5b for MIME types other than application/octet-stream)
+	bfaDetect/Detected_Mime_type_count.json - used by vis/bfd2.htm (Part 5a for application/octet-stream)
+	bfaDetect/File_and_mimetype.json - matches application/octet-stream files to the most similar of 14 MIME types, according to BFA (Part 5a)
+	bfaDetect/File_and_alevel.json - contains assurance level of those MIME type matches (Part 5a)
+	bfc.json - used by vis/bfc.htm (Part 5c)	
+	fht.json - used by vis/fht.htm (Part 6)
+	fhtDetect/*.json - Groups similar application/octet-stream files together using FHT. First number is assurance cutoff and second number is number of bytes per file to compare. Used to create the final tika-mimetypes.xml. (Part 7a)
+	diversity.json - Used by diversity-after.htm and diversity-after-bar.htm (Part 7d)
