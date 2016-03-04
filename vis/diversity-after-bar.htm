@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MIME diversity (after)</title>
+<script src="d3/d3.min.js"></script>
+
+<style>
+
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.title {
+  font: bold 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+</style>
+</head>
+<body onload="load()">
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 80, right: 80, bottom: 450, left: 80},
+    width = 2000 - margin.left - margin.right,
+    height = 1300 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1, .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var rawData = {"image/x-bpg":7,"message/rfc822":205,"application/vnd.ms-htmlhelp":1,"application/atom+xml":2659,"image/x-xcf":1,"image/x-ms-bmp":54,"application/vnd.openxmlformats-officedocument.wordprocessingml.template":1,"application/x-shockwave-flash":121,"video/x-msvideo":80,"application/vnd.apple.keynote":1,"audio/x-flac":2,"application/dif+xml":2907,"application/vnd.ms-excel":523,"text/x-jsp":3,"application/vnd.ms-excel.sheet.4":1,"audio/mp4":18,"application/pdf":37810,"application/x-bittorrent":3,"application/x-tika-ooxml":789,"application/rss+xml":7555,"application/x-netcdf":19,"text/x-perl":14,"application/epub+zip":29,"text/html":676956,"application/vnd.openxmlformats-officedocument.presentationml.presentation":12,"application/x-hdf":26,"text/x-diff":1,"application/x-rpm":3,"image/vnd.microsoft.icon":1345,"video/quicktime":880,"text/troff":2,"video/mp4":618,"application/xml":5637,"application/zlib":22,"application/x-sh":1066,"audio/x-ms-wma":55,"text/x-php":24,"application/xhtml+xml":277210,"application/postscript":211,"application/x-tika-msoffice":1568,"application/x-msdownload; format=pe32":15,"video/x-m4v":168,"application/javascript":299,"application/x-tika-ooxml-protected":1,"application/vnd.ms-excel.sheet.macroenabled.12":1,"application/vnd.sun.xml.writer":1,"audio/basic":54,"application/x-compress":40,"image/vnd.dwg":3,"application/vnd.ms-powerpoint":48,"application/x-tex":11,"application/x-sqlite3":1,"video/mpeg":231,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":140,"image/tiff":448,"application/x-stuffit":1,"application/zip":1472,"application/x-bibtex-text-file":131,"application/xslt+xml":11,"application/x-gtar":45,"application/vnd.openxmlformats-officedocument":17,"application/fits":46,"image/vnd.adobe.photoshop":4,"application/x-msdownload; format=pe":1,"image/gif":33709,"application/x-mspublisher":2,"application/java-vm":1,"application/x-rar-compressed":1,"application/vnd.openxmlformats-officedocument.wordprocessingml.document":413,"application/x-activemime":1,"text/x-csrc":3,"application/vnd.google-earth.kmz":105,"application/vnd.rn-realmedia":103,"audio/x-wav":58,"audio/x-aiff":9,"application/octet-stream":95755,"application/msword":686,"video/x-ms-asf":25,"application/rdf+xml":927,"application/vnd.google-earth.kml+xml":249,"application/x-msmetafile":5,"audio/mpeg":591,"video/x-ms-wmv":122,"application/rtf":44,"application/x-lha":2,"application/vnd.oasis.opendocument.text":5,"application/x-matroska":65,"application/x-7z-compressed":2,"application/x-xz":11,"application/x-msdownload":72,"audio/x-mpegurl":1,"image/jpeg":79538,"audio/vorbis":3,"image/svg+xml":283,"video/x-flv":12,"application/x-java-jnilib":1,"application/x-debian-package":4,"text/x-matlab":1091,"application/x-grib":3,"application/gzip":1596,"application/x-executable":32,"text/plain":89715,"application/dita+xml; format=concept":319,"message/x-emlx":1,"image/png":33721,"application/x-bzip2":63,"application/x-elc":262,"text/x-vcard":13,"application/x-tar":32,"application/vnd.openxmlformats-officedocument.presentationml.slideshow":1,"text/x-python":5,"application/x-font-ttf":9}
+
+var data = Object.keys(rawData).map(function(k) {
+    return {name: k, value: rawData[k]};
+});
+data.sort(function(a, b) {
+    return b.value - a.value;
+});
+
+function load() {
+  x.domain(data.map(function(d) { return d.name; }));
+  y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+  svg.append("text")
+      .attr("class", "title")
+      .attr("x", x(data[0].name))
+      .attr("y", -26)
+      .text("Diversity Analysis");
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .selectAll("text")
+    .attr("y", 0)
+    .attr("x", 9)
+    .attr("dy", ".200em")
+    .attr("transform", "rotate(90)")
+    .style("text-anchor", "start");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); });
+}
+
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
+
+function type(d) {
+  d.value = +d.value;
+  return d;
+}
+
+</script>
+</body>
+</html>
