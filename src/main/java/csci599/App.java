@@ -19,6 +19,8 @@ public class App {
             "    Perform byte frequency cross correlation using the file lists in <sort folder>, saving the output to bfc.json.\n" +
             "fht <sort folder> [H=16]\n" +
             "    Perform file header/trailer analysis on first H bytes per file using the file lists in <sort folder>, saving the output to fht.json.\n" +
+            "fhtDetect <sort folder> <assurance cutoff> [H=16]\n" +
+            "    Use FHT to detect similar files of unknown type, saving the output to fht-detect.json.\n" +
             "diversity <folder>\n" +
             "    Perform MIME diversity analysis on <folder>, saving the output to diversity.json.\n";
         if (args.length < 2) {
@@ -62,6 +64,16 @@ public class App {
                     FHT.H = Integer.parseInt(args[2]);
                 }
                 FHT.analyze(new File(args[1]));
+                break;
+            case "fhtDetect":
+                if (args.length < 3) {
+                    System.out.print(usage);
+                    return;
+                }
+                if (args.length >= 4) {
+                    FHT.H = Integer.parseInt(args[3]);
+                }
+                FHT.detectUnknown(new File(args[1]), Double.parseDouble(args[2]));
                 break;
             case "diversity":
                 FileTypeFilter.diversityAnalysis(new File(args[1]));
