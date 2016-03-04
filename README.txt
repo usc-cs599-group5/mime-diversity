@@ -49,3 +49,14 @@ Important files and folders
 vis - contains d3 visualizations (these are self explanatory)
 json - Contains the JSON files, most of which are used by visualizations. We tried to use d3.json() to load them but ran into cross-site restriction issues, so we ended up copy-pasting the JSON into the visualization HTML, unfortunately.
 	bfa.json - used by vis/bfa.htm
+	bfc.json - used by vis/bfc.htm
+	bfd-I-a.json - used by vis/bfd1.htm
+	bfd-I-b.json - used by vis/bfd1.htm
+	bfd-I-c.json - used by vis/bfd1.htm
+	fht.json - used by vis/fht.htm
+ 	bfaDetect/Detected_Mime_type_count.json - used by vis/bfd1.htm
+	bfaDetect/File_and_alevel.json - contains assurance level for each file
+	bfaDetect/File_and_mimetype.json - contains its detected mime type
+	fhtDetect/fht-detect-1-4.json - 
+	fhtDetect/fht-detect-1-8.json - 
+	fhtDetect/fht-detect-1-16.json - 
