@@ -49,6 +49,7 @@ Important files and folders
 tika-mimetypes.xml - our modified Tika fingerprint file
 tika-mimetypes.diff - diff of our tika-mimetypes.xml compared to the one in Tika 1.11
 vis - Contains d3 visualizations. Hover over the pie slice, line, etc to see tooltips.
+vis-extra-credit - Extra credit visualization. Must open in Firefox, not Chrome.
 json - Contains the JSON files, most of which are used by visualizations. We tried to use d3.json() to load them but ran into cross-site restriction issues, so we ended up copy-pasting the JSON into the visualization HTML, unfortunately.
 	bfa.json - used by vis/bfa.htm (Part 4)
 	bfd-I-a.json, bfd-I-b.json, bfd-I-c.json - used by vis/bfd1.htm (Part 5a, 5b for MIME types other than application/octet-stream)
