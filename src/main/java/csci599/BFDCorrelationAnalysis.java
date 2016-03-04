@@ -27,7 +27,7 @@ public class BFDCorrelationAnalysis
         charSetSize=256;
         Map<String, BFAFingerprint> json = null;
         try {
-            json = JSONGenerator.readJSON("E:\\Sem 2\\CSCI 599\\tika-test\\BFA\\bfa75.json");
+            json = JSONGenerator.readJSON("bfa.json");
             //System.out.println(json);
         } catch (IOException ex) {
             System.out.println("Error reading bfa.json. Make sure it exists.");
