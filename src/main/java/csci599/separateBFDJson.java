@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+// Internal helper script to separate BFD JSON files for visualization. You probably don't need to run this.
 public class separateBFDJson
 {
     static ObjectMapper mapper = new ObjectMapper();

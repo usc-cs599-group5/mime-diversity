@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// Entry point to mime-diversity program.
+// It parses command line arguments and passes them to the appropriate class.
 public class App {
     public static void main(String[] args) {
         String usage = "Command line arguments:\n" +
@@ -19,10 +21,14 @@ public class App {
             "    Perform byte frequency cross correlation using the file lists in <sort folder>, saving the output to bfc.json.\n" +
             "fht <sort folder> [H=16]\n" +
             "    Perform file header/trailer analysis on first H bytes per file using the file lists in <sort folder>, saving the output to fht.json.\n" +
+            "bfaDetect <sort folder>\n" +
+            "    Use BFA to try to classify files in <sort folder> to their closest known type, saving the output to Detected_Mime_type_count.json, File_and_mimetype.json, and File_and_alevel.json.\n" +
             "fhtDetect <sort folder> <assurance cutoff> [H=16]\n" +
             "    Use FHT to detect similar files of unknown type, saving the output to fht-detect.json.\n" +
             "diversity <folder>\n" +
-            "    Perform MIME diversity analysis on <folder>, saving the output to diversity.json.\n";
+            "    Perform MIME diversity analysis on <folder>, saving the output to diversity.json.\n" +
+            "separatejson <folder>\n" +
+            "    Internal helper script to separate BFD JSON files for visualization. You probably don't need to run this.";
         if (args.length < 2) {
             System.out.print(usage);
             return;
