@@ -214,7 +214,7 @@ public class BFA {
             ArrayList<Double> corscore = findcorrelation(newfingerprint,s);
             Double sum = 0.0;
             for(Double d: corscore){
-                sum += (1-Math.abs(d));
+                sum += d;
             }
             //Computing and adding assurance level Assurance level
             Double alevel = sum/256;
