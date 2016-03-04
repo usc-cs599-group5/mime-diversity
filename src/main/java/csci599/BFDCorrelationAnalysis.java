@@ -57,6 +57,9 @@ public class BFDCorrelationAnalysis
                 BFD=frequencyDist(BFD,file);
                 BFD=normalize(BFD);
                 BFD=compand(BFD);
+                for(int i=0;i<BFD.length;i++)
+                    System.out.println(BFD[i]);
+                System.out.println("");
                 newFileBFD.put(file.getName(), BFD);
                 double[] CS=new double[charSetSize];
                 for(int i=0;i<CS.length;i++)
