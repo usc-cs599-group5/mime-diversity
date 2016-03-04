@@ -17,8 +17,8 @@ public class App {
             "    Perform byte frequency distribution correlation using bfa.json and the file lists in <sort folder>, saving the output to bfd-I-a.json, bfd-I-b.json, and bfd-I-c.json.\n" +
             "bfc <sort folder>\n" +
             "    Perform byte frequency cross correlation using the file lists in <sort folder>, saving the output to bfc.json.\n" +
-            "fht <sort folder>\n" +
-            "    Perform file header/trailer analysis using the file lists in <sort folder>, saving the output to fht.json.\n" +
+            "fht <sort folder> [H=16]\n" +
+            "    Perform file header/trailer analysis on first H bytes per file using the file lists in <sort folder>, saving the output to fht.json.\n" +
             "diversity <folder>\n" +
             "    Perform MIME diversity analysis on <folder>, saving the output to diversity.json.\n";
         if (args.length < 2) {
@@ -58,6 +58,9 @@ public class App {
                 break;
             }
             case "fht":
+                if (args.length >= 3) {
+                    FHT.H = Integer.parseInt(args[2]);
+                }
                 FHT.analyze(new File(args[1]));
                 break;
             case "diversity":

@@ -6,15 +6,11 @@ import java.util.function.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FHT {
-    private static final int H = 16;
+    public static int H = 16;
 
     private static class Fingerprint {
-        public int[][] matrix;
+        public int[][] matrix = new int[H][256];
         public int numFiles = 0;
-
-        public Fingerprint() {
-            matrix = new int[H][256];
-        }
 
         public void addFile(File file) {
             try (FileInputStream in = new FileInputStream(file)) {
