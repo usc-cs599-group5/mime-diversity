@@ -47,24 +47,17 @@ div.tooltip {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 
+var data;
+
+function load() {
+  d3.json("vis-json/bfc.json", function(error, json) {
+    data = json;
+    temp();
+  });
+}
+
 function temp(){
 
-            var data = {"application_xml" : [0],
-                        "applicationoctet_stream": [0],
-                        "application_gzip":[0],
-                        "application_msword":[0],
-                        "application_postscript":[0],
-                        "application_rdf":[0],
-                        "application_x-executable" :[0],
-                        "audio_mpeg" :[0],
-                        "audio_x-wav" : [0],
-                        "image_gif" :[0],
-                        "image_svg+xml":[0],
-                        "image_tiff":[0],
-                        "message_rfc822": [0],
-                        "video_mp4" : [0],
-                        "video_mpeg" : [0]
-                       };
             d3.select("#choose")
             .selectAll("option")
             .data(Object.keys(data).sort())
@@ -86,12 +79,7 @@ var width = 500,
 var e = document.getElementById("choose");
 var str = e.options[e.selectedIndex].value;
     
-var heatmap = d3.json(str +".json", function(error, heatmap) {
-  if (error){
-     throw error;
-      alert("inside error");
-  }
-    
+var heatmap = data[str];   
   var dx = heatmap[0].length,
       dy = heatmap.length;
 
@@ -210,13 +198,12 @@ canvas1.addEventListener("mousemove",function () {
   function removeZero(axis) {
     axis.selectAll("g").filter(function(d) { return !d; }).remove();
   }
-});   
 }
 
    
 
 </script>
-<body onload="temp();">
+<body onload="load();">
         <div style="margin-top: 10px;text-align : center">
             <select id="choose" onchange="loadchange();"></select>
         </div>
