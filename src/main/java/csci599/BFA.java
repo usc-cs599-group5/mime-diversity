@@ -211,6 +211,8 @@ public class BFA {
         String mimetype = "";
         //Computing correlation factor score for each file type
         for(String s : ContentType){
+            if (s.equals("application/octet-stream"))
+                continue;
             ArrayList<Double> corscore = findcorrelation(newfingerprint,s);
             Double sum = 0.0;
             for(Double d: corscore){
