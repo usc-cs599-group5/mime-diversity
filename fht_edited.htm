@@ -189,7 +189,7 @@ function load() {
 
 
 x = d3.scale.linear().domain([0,255]).range([0, w]);
-y = d3.scale.linear().domain([0,255]).range([h, 0]);
+y = d3.scale.linear().domain([15,0]).range([h, 0]);
 
 var graph = d3.select("#xa").append("svg:svg")
 			      .attr("width", w + m[1] + m[3])
@@ -241,7 +241,7 @@ function select() {
 }
 </script>
   </head>
-  <body onload="load()" style="background-color: yellow;">
+  <body onload="load()" style="background-color: #eee">
         <div style="margin-top : 40px;">
 
       <select id="choose" onchange="select()"></select>
@@ -252,6 +252,8 @@ function select() {
       <br>
       </div>
       </div>
+    <div style="position: absolute; left: 200px; top: 370px; width: 768px; text-align: center">Byte Value</div>
+    <div style="position: absolute; top: 220px; width: 200px; text-align: center; transform: rotate(-90deg)">Byte Position</div>
 
   </body>
 </html>
