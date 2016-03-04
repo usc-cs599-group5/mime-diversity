@@ -30,8 +30,7 @@ public class BFA {
             String s = content_itr.next();
             // ok that we put the same ArrayList reference for every HashMap value because the ArrayList will never be mutated
             avgfrequency.put(s,arr);
-            corrstrength.put(s,arr);
-            Type_Count.put(s,0);
+            corrstrength.put(s,arr);            
         }
     }
     //Analysing each files in a folder
@@ -74,10 +73,11 @@ public class BFA {
         } catch (IOException ex) {
             System.out.println("Error reading bfa.json. Make sure it exists.");
         }
-        for(Object key:json.keySet())
+        for(String key:json.keySet())
         {
-            avgfrequency.put((String) key, json.get(key).BFD);
-            ContentType.add((String)key);
+            avgfrequency.put(key, json.get(key).BFD);
+            ContentType.add(key);
+            Type_Count.put(key,0);
         }
         FileTypeFilter.forEach(folder, (file, contentType) ->{
             try {    
