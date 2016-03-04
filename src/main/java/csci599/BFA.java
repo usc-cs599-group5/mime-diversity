@@ -1,15 +1,24 @@
 package csci599;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BFA {
     static HashMap<String,ArrayList<Double>> avgfrequency = new HashMap<>();
     static HashMap<String,ArrayList<Double>> corrstrength = new HashMap<>();
     static HashMap<String,Integer> no_of_files = new HashMap<>();
     static List<String> ContentType;
+    static int newtypecount = 0;
+    static HashMap<String,Integer> Type_Count = new HashMap<>();
+    static HashMap<String,String> FileType = new HashMap<>();
+    static HashMap<String,Double> Assurancelvl = new HashMap<>();
+    
     BFA(final File sortFolder){
         //Adding Content types
         ContentType = FileTypeFilter.getMIMETypes(sortFolder);
@@ -23,7 +32,7 @@ public class BFA {
             String s = content_itr.next();
             // ok that we put the same ArrayList reference for every HashMap value because the ArrayList will never be mutated
             avgfrequency.put(s,arr);
-            corrstrength.put(s,arr);
+            corrstrength.put(s,arr);            
         }
     }
     //Analysing each files in a folder
@@ -52,6 +61,32 @@ public class BFA {
         });
         //displayFingerprintCorr();
         JsonConnect();
+
+   }
+   public void listFilesForFolder1(final File folder) throws IOException{     
+        Map<String, BFAFingerprint> json = null;
+        try {
+            json = JSONGenerator.readJSON("bfa.json");
+            //System.out.println(json);
+        } catch (IOException ex) {
+            System.out.println("Error reading bfa.json. Make sure it exists.");
+        }
+        for(String key:json.keySet())
+        {
+            avgfrequency.put(key, json.get(key).BFD);
+            ContentType.add(key);
+            Type_Count.put(key,0);
+        }
+        FileTypeFilter.forEach(folder, (file, contentType) ->{
+            try {    
+                detectUnknown(file);
+            } catch (IOException ex) {
+                System.out.println("Exception Occured");;
+            }
+        });
+        new ObjectMapper().writeValue(new File("Detected_Mime_type_count.json"), Type_Count);
+        new ObjectMapper().writeValue(new File("File_and_mimetype.json"), FileType);
+        new ObjectMapper().writeValue(new File("File_and_alevel.json"), Assurancelvl);
         
     }
     public static double[] freqAnalysis(File f){
@@ -169,4 +204,41 @@ public class BFA {
             System.out.println("");
         }
     }
+    public static void detectUnknown(File f) throws IOException{
+        double[] newfingerprint = freqAnalysis(f);
+        //Boolean isNew = true;
+        double maxalevel = 0;
+        String mimetype = "";
+        //Computing correlation factor score for each file type
+        for(String s : ContentType){
+            if (s.equals("application/octet-stream"))
+                continue;
+            ArrayList<Double> corscore = findcorrelation(newfingerprint,s);
+            Double sum = 0.0;
+            for(Double d: corscore){
+                sum += d;
+            }
+            //Computing and adding assurance level Assurance level
+            Double alevel = sum/256;
+            if(alevel >= maxalevel){
+                maxalevel = alevel;
+                mimetype = s;
+            }
+        }        //isNew = false;
+        Integer newcount = Type_Count.get(mimetype) + 1;
+        Type_Count.put(mimetype,newcount);
+        FileType.put(f.getPath(),mimetype);
+        Assurancelvl.put(f.getPath(),maxalevel);
+        
+        /*if(isNew == true){
+            System.out.println("It is new type");
+            newtypecount++;
+            String d = "NewType_" + newtypecount;
+            ContentType.add(d);
+            ArrayList<Double> al = new ArrayList();
+            for(int i = 0 ; i < 256;i++){
+                al.add(newfingerprint[i]);
+            }
+                 */     
+    }            
 }
