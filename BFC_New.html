@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  position: relative;
+}
+
+svg,
+canvas {
+  position: absolute;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis path {
+  display: none;
+}
+
+div.tooltip {	
+                position: absolute;			
+                text-align: center;			
+                width: 90px;					
+                height: 50px;					
+                padding: 2px;				
+                font: 12px sans-serif;		
+                background: lightsteelblue;	
+                border: 0px;		
+                border-radius: 8px;			
+                pointer-events: none;			
+            }
+
+</style>
+<script src="d3/d3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+
+function temp(){
+
+            var data = {"application_xml" : [0],
+                        "applicationoctet_stream": [0],
+                        "application_gzip":[0],
+                        "application_msword":[0],
+                        "application_postscript":[0],
+                        "application_rdf":[0],
+                        "application_x-executable" :[0],
+                        "audio_mpeg" :[0],
+                        "audio_x-wav" : [0],
+                        "image_gif" :[0],
+                        "image_svg+xml":[0],
+                        "image_tiff":[0],
+                        "message_rfc822": [0],
+                        "video_mp4" : [0],
+                        "video_mpeg" : [0]
+                       };
+            d3.select("#choose")
+            .selectAll("option")
+            .data(Object.keys(data).sort())
+            .enter().append("option")
+            .text(function(d) { return d });
+             loadchange();
+
+    
+}
+             
+
+function loadchange(){  
+
+ 
+
+var width = 500,
+    height = 500;
+
+var e = document.getElementById("choose");
+var str = e.options[e.selectedIndex].value;
+    
+var heatmap = d3.json(str +".json", function(error, heatmap) {
+  if (error){
+     throw error;
+      alert("inside error");
+  }
+    
+  var dx = heatmap[0].length,
+      dy = heatmap.length;
+
+
+  var x = d3.scale.linear()
+      .domain([0, dx])
+      .range([0, width]);
+
+  var y = d3.scale.linear()
+      .domain([0, dy])
+      .range([0,height]);
+
+  var color = d3.scale.linear()
+      .domain([-1,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6, 0.7, 0.8,0.9,1,100])
+      .range(["#0af","#0ae" ,"#0ad","#0ac","#0ab","#0aa","#0a9","#0a8","#0a7","#0a6","#0a5","#0a4","#0a3","#0a2","#0a1","#0a0","#6c0", "#ee0", "#eb4", "#eb9", "#fff","#000"]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("top")
+      .ticks(20);
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("right");
+
+  d3.select("#he").append("canvas")
+      .attr("width", dx)
+      .attr("height", dy)
+      .attr("id","canvas")
+      .style("width", width + "px")
+      .style("height", height + "px")
+      .call(drawImage);
+    
+  var svg = d3.select("#he")
+        .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+ 
+// Define the div for the tooltip
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+    
+  svg.on("mousemove", function () {
+        cx = d3.mouse(this)[0];
+        cy = d3.mouse(this)[1];
+        //alert(cx + " "+ cy);
+        var m = Math.floor(x.invert(cx));
+        var n = Math.floor(y.invert(cy));
+        var bd = heatmap[m][n];
+        var bd1 = bd.toFixed(2);
+        if(Math.abs(bd1) == 0) bd1 = 0.00;
+        var cs = Math.abs(heatmap[n][m]);
+        
+        var cs1 = cs.toFixed(2); 
+                 //alert(dat);
+                 div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+                 div	.html( "Byte No " + m  + " and " + n +" <br/>" + "Byte difference: " + bd1 +"<br/>"  + "Correlation Strength: " +cs1 )
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px")
+                .style("width","200px")
+                .style("background","pink");
+        //alert(m + "  " + n + "  " + );
+    });
+    
+    
+    
+    svg.on("mouseout", function() {		
+                                div.transition()		
+                                .duration(500)		
+                                .style("opacity", 0);	});
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .call(removeZero);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .call(removeZero);
+    
+
+/*var canvas1 = document.getElementById("he");      
+
+canvas1.addEventListener("mousemove",function () {
+                       var k = d3.mouse(this)[0];
+                       alert("hello");
+                       ///alert(k);
+                   });  */ 
+    
+    
+
+  // Compute the pixel colors; scaled by CSS.
+
+  function drawImage(canvas) {
+    var context = canvas.node().getContext("2d"),
+        image = context.createImageData(dx, dy);
+
+    for (var y = 0, p = -1; y < dy; ++y) {
+      for (var x = 0; x < dx; ++x) {
+        var c = d3.rgb(color(heatmap[y][x]));
+        image.data[++p] = c.r;
+        image.data[++p] = c.g;
+        image.data[++p] = c.b;
+        image.data[++p] = 255;
+      }
+    }
+
+    context.putImageData(image, 0, 0)
+          
+  }
+
+  function removeZero(axis) {
+    axis.selectAll("g").filter(function(d) { return !d; }).remove();
+  }
+});   
+}
+
+   
+
+</script>
+<body onload="temp();">
+        <div style="margin-top: 10px;text-align : center">
+            <select id="choose" onchange="loadchange();"></select>
+        </div>
+    <div id = "he"></div>
+</body>
+</body>
+</html>
+    
